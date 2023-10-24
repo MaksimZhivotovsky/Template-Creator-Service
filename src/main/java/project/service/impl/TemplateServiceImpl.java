@@ -3,6 +3,7 @@ package project.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.entity.Template;
+import project.exceptions.TemplateNotFoundException;
 import project.repository.TemplateRepository;
 import project.service.TemplateService;
 
@@ -28,7 +29,7 @@ public class TemplateServiceImpl implements TemplateService {
                 .filter(temple -> temple.getTemplateId().equals(templateId))
                 .findAny();
         if(template.isEmpty()) {
-           throw new RuntimeException("Такого шаблона нет id : " + templateId);
+           throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
         }
         return template;
     }
@@ -44,19 +45,18 @@ public class TemplateServiceImpl implements TemplateService {
                 .filter(temple -> temple.getTemplateId().equals(templateId))
                 .findAny();
         if(dataTemplate.isEmpty()) {
-            throw new RuntimeException("Такого шаблона нет id : " + templateId);
+            throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
         }
-        if(dataTemplate.isPresent()) {
-            if(template.getName() != null) {
-                dataTemplate.get().setName(template.getName());
-            }
-            if(template.getSqlValue() != null) {
-                dataTemplate.get().setSqlValue(template.getSqlValue());
-            }
-            if(template.getIsArchive() != null) {
-                dataTemplate.get().setIsArchive(template.getIsArchive());
-            }
+        if(template.getName() != null) {
+            dataTemplate.get().setName(template.getName());
         }
+        if(template.getSqlValue() != null) {
+            dataTemplate.get().setSqlValue(template.getSqlValue());
+        }
+        if(template.getIsArchive() != null) {
+            dataTemplate.get().setIsArchive(template.getIsArchive());
+        }
+
         return dataTemplate.get();
     }
 
