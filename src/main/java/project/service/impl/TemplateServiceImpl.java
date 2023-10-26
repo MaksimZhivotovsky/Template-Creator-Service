@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.dto.TemplateDto;
+import project.entity.HistoryTemplate;
 import project.entity.Template;
 import project.exceptions.TemplateNotFoundException;
+import project.repository.HistoryTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.TemplateService;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class TemplateServiceImpl implements TemplateService {
 
     private final TemplateRepository templateRepository;
+    private final HistoryTemplateRepository historyTemplateRepository;
 
     @Override
     @Transactional(readOnly = true)

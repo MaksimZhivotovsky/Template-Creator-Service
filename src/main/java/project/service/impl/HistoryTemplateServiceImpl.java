@@ -87,6 +87,10 @@ public class HistoryTemplateServiceImpl implements HistoryTemplateService {
     @Override
     public String getHistoryTemplateActual(Long templateId) {
         Optional<HistoryTemplate> requestData = historyTemplateRepository.findFirstByTemplateTemplateIdOrderByTimestampDesc(templateId);
+        if(requestData.isEmpty()) {
+            Optional<Template> template = templateRepository.findById(templateId);
+            return template.get().getJsonValue();
+        }
         return requestData.get().getHistoryJsonValue();
     }
 }
