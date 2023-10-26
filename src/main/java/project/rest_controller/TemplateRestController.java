@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.dto.TemplateDto;
 import project.entity.Template;
 import project.service.TemplateService;
 
@@ -35,7 +36,7 @@ public class TemplateRestController {
     @PatchMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
             @PathVariable("templateId") Long templateId,
-            @RequestBody Template template) {
+            @RequestBody TemplateDto template) {
         return new ResponseEntity<>(templateService.updateTemplate(templateId, template), HttpStatus.OK);
     }
     @DeleteMapping(value = "/{templateId}")

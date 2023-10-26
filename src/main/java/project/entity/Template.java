@@ -1,17 +1,18 @@
 package project.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(of = "templateId")
 @ToString(of = {"templateId","name"})
+@Table(name = "templates")
 public class Template {
 
     @Id
@@ -22,9 +23,18 @@ public class Template {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "sql_value")
-    private String sqlValue;
+    @Column(name = "json_value")
+    private String jsonValue;
 
     @Column(name = "is_archive")
-    private Boolean isArchive;
+    private Boolean isArchive = false;
+
+    @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<HistoryTemplate> historyTemplates;
+
+    public HistoryTemplate setHistoryTemplates(HistoryTemplate historyTemplate) {
+        historyTemplates.add(historyTemplate);
+        return historyTemplate;
+    }
 }
