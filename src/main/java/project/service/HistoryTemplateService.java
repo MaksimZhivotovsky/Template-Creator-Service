@@ -1,8 +1,10 @@
 package project.service;
 
+import org.json.JSONObject;
 import project.entity.HistoryTemplate;
 import project.entity.Template;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,5 +16,5 @@ public interface HistoryTemplateService {
     void deleteByIdHistoryTemplate(Long historyTemplateId);
     List<HistoryTemplate> findAllByTemplateId(Long templateId);
     HistoryTemplate updateHistoryTemplateJsonValue(Long templateId, Template RequestData);
-    String getHistoryTemplateActual(Long templateId);
+    Object getHistoryTemplateActual(Long templateId) throws IOException;
 }

@@ -1,5 +1,6 @@
 package project.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public Template updateTemplate(Long templateId, TemplateDto template) {
+    public Template updateTemplate(Long templateId, Template template) throws JsonProcessingException {
         Optional<Template> dataTemplate = templateRepository.findById(templateId);
         if(dataTemplate.isEmpty()) {
             throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);

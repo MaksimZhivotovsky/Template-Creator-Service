@@ -1,7 +1,10 @@
 package project.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.util.List;
@@ -32,6 +35,11 @@ public class Template {
     @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<HistoryTemplate> historyTemplates;
+
+    public void setJsonValue(Object jsonValue) throws JsonProcessingException {
+        ObjectMapper Obj = new ObjectMapper();
+        this.jsonValue = Obj.writeValueAsString(jsonValue);
+    }
 
     public HistoryTemplate setHistoryTemplates(HistoryTemplate historyTemplate) {
         historyTemplates.add(historyTemplate);
