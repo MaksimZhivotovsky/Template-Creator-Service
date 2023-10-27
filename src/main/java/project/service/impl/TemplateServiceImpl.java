@@ -1,14 +1,10 @@
 package project.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.dto.TemplateDto;
-import project.entity.HistoryTemplate;
 import project.entity.Template;
 import project.exceptions.TemplateNotFoundException;
-import project.repository.HistoryTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.TemplateService;
 
@@ -20,7 +16,6 @@ import java.util.Optional;
 public class TemplateServiceImpl implements TemplateService {
 
     private final TemplateRepository templateRepository;
-    private final HistoryTemplateRepository historyTemplateRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -31,9 +26,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public Optional<Template> getByIdTemplate(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
-        if(template.isEmpty()) {
-           throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
-        }
+        checkTemplate(templateId);
         return template;
     }
 
@@ -43,16 +36,14 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public Template updateTemplate(Long templateId, Template template) throws JsonProcessingException {
+    public Template updateTemplate(Long templateId, Template template) {
         Optional<Template> dataTemplate = templateRepository.findById(templateId);
-        if(dataTemplate.isEmpty()) {
-            throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
-        }
+        checkTemplate(templateId);
         if(template.getName() != null) {
             dataTemplate.get().setName(template.getName());
         }
-        if(template.getJsonValue() != null) {
-            dataTemplate.get().setJsonValue(dataTemplate.get().getJsonValue());
+        if(template.getJsonTemplate() != null) {
+            dataTemplate.get().setJsonTemplate(dataTemplate.get().getJsonTemplate());
         }
 
         return dataTemplate.get();
@@ -61,9 +52,14 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public void deleteByIdTemplate(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
+        checkTemplate(templateId);
+        template.get().setIsArchive(true);
+    }
+
+    private void checkTemplate(Long templateId) {
+        Optional<Template> template = templateRepository.findById(templateId);
         if(template.isEmpty()) {
             throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
         }
-        template.get().setIsArchive(true);
     }
 }

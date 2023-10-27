@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
-import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,23 +25,34 @@ public class Template {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "json_value")
-    private String jsonValue;
+    @Column(name = "json_template")
+    private String jsonTemplate;
+
+    @Column(name = "post_create_template")
+    private String postCreateTemplate;
 
     @Column(name = "is_archive")
     private Boolean isArchive = false;
 
     @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<HistoryTemplate> historyTemplates;
+    private List<JsonTemplate> jsonTemplates;
 
-    public void setJsonValue(Object jsonValue) throws JsonProcessingException {
+    @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<PostCreateTemplate> postCreateTemplates;
+
+    public void setJsonTemplate(Object jsonTemplate) {
         ObjectMapper Obj = new ObjectMapper();
-        this.jsonValue = Obj.writeValueAsString(jsonValue);
+        try {
+            this.jsonTemplate = Obj.writeValueAsString(jsonTemplate);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public HistoryTemplate setHistoryTemplates(HistoryTemplate historyTemplate) {
-        historyTemplates.add(historyTemplate);
-        return historyTemplate;
+    public JsonTemplate setJsonTemplates(JsonTemplate jsonTemplate) {
+        jsonTemplates.add(jsonTemplate);
+        return jsonTemplate;
     }
 }

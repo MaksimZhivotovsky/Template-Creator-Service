@@ -12,6 +12,6 @@ public interface TemplateService {
     List<Template> getAllTemplates();
     Optional<Template> getByIdTemplate(Long templateId);
     Template createTemplate(Template template);
-    Template updateTemplate(Long templateId, Template template) throws JsonProcessingException;
+    Template updateTemplate(Long templateId, Template template);
     void deleteByIdTemplate(Long templateId);
 }
