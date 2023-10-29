@@ -1,8 +1,6 @@
 package project.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,12 +34,4 @@ public class JsonTemplate {
     @JsonBackReference
     private Template template;
 
-    public void setJsonValue(Object jsonValue) {
-        ObjectMapper Obj = new ObjectMapper();
-        try {
-            this.jsonValue = Obj.writeValueAsString(jsonValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -3,8 +3,10 @@ package project.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.dto.TemplateDto;
 import project.entity.Template;
 import project.exceptions.TemplateNotFoundException;
+import project.mapper.TemplateMapper;
 import project.repository.TemplateRepository;
 import project.service.TemplateService;
 
@@ -31,18 +33,20 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public Template createTemplate(Template template) {
+    public Template createTemplate(TemplateDto templateDto) {
+        Template template = TemplateMapper.mapToTemplate(templateDto);
+
         return templateRepository.save(template);
     }
 
     @Override
-    public Template updateTemplate(Long templateId, Template template) {
+    public Template updateTemplate(Long templateId, TemplateDto templateDto) {
         Optional<Template> dataTemplate = templateRepository.findById(templateId);
         checkTemplate(templateId);
-        if(template.getName() != null) {
-            dataTemplate.get().setName(template.getName());
+        if(templateDto.getName() != null) {
+            dataTemplate.get().setName(templateDto.getName());
         }
-        if(template.getJsonTemplate() != null) {
+        if(templateDto.getJsonTemplate() != null) {
             dataTemplate.get().setJsonTemplate(dataTemplate.get().getJsonTemplate());
         }
 

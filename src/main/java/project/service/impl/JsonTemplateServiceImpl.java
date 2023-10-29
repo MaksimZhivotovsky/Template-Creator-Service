@@ -9,9 +9,11 @@ import lombok.RequiredArgsConstructor;
 
 
 import org.springframework.stereotype.Service;
+import project.dto.JsonTemplateDto;
 import project.entity.JsonTemplate;
 import project.entity.Template;
 import project.exceptions.TemplateNotFoundException;
+import project.mapper.JsonTemplateMapper;
 import project.repository.JsonTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.JsonTemplateService;
@@ -28,28 +30,13 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     private final TemplateRepository templateRepository;
 
     @Override
-    public JsonTemplate createJsonTemplate(Long templateId, JsonTemplate jsonTemplate) {
+    public JsonTemplate createJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto) {
         Optional<Template> template = templateRepository.findById(templateId);
         checkTemplate(templateId);
-        jsonTemplate.setTemplate(template.get());
-        return jsonTemplateRepository.save(jsonTemplate);
-    }
+        jsonTemplateDto.setTemplate(template.get());
+        JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
 
-    @Override
-    public JsonTemplate updateJsYonTemplate(Long templateId, Long historyTemplateId, JsonTemplate jsonTemplate) {
-        checkTemplate(templateId);
-        Optional<JsonTemplate> rData = jsonTemplateRepository.findById(historyTemplateId);
-        checkTemplate(templateId);
-        if(jsonTemplate.getJsonValue() != null) {
-            rData.get().setJsonValue(rData.get().getJsonValue());
-        }
-        if(jsonTemplate.getIsArchive() != null) {
-            rData.get().setIsArchive(jsonTemplate.getIsArchive());
-        }
-        if(jsonTemplate.getTemplate() != null) {
-            rData.get().setTemplate(jsonTemplate.getTemplate());
-        }
-        return rData.get();
+        return jsonTemplateRepository.save(jsonTemplate);
     }
 
     @Override
@@ -72,15 +59,10 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     }
 
     @Override
-    public JsonTemplate updateJsonTemplate(Long templateId, Template template)  {
-        Optional<Template> rData = templateRepository.findById(templateId);
+    public JsonTemplate updateJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto)  {
         checkTemplate(templateId);
-        JsonTemplate requestData = new JsonTemplate();
-        if(template != null) {
-            requestData.setTemplate(rData.get());
-            requestData.setJsonValue(template.getJsonTemplate());
-        }
-        return jsonTemplateRepository.save(requestData);
+        JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
+        return jsonTemplateRepository.save(jsonTemplate);
     }
 
     @Override
@@ -98,14 +80,14 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
 
     private Object parserJson(String parse) {
         ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getJsonFactory();
-        JsonParser parser = null;
+        JsonFactory factory = mapper.getFactory();
+        JsonParser parser;
         try {
-            parser = factory.createJsonParser(parse);
+            parser = factory.createParser(parse);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        JsonNode actualObj = null;
+        JsonNode actualObj;
         try {
             actualObj = mapper.readTree(parser);
         } catch (IOException e) {

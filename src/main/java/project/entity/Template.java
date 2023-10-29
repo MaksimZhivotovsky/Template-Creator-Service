@@ -1,8 +1,6 @@
 package project.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,7 +30,7 @@ public class Template {
     private String postCreateTemplate;
 
     @Column(name = "is_archive")
-    private Boolean isArchive = false;
+    private Boolean isArchive;
 
     @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -42,17 +40,13 @@ public class Template {
     @JsonManagedReference
     private List<PostCreateTemplate> postCreateTemplates;
 
-    public void setJsonTemplate(Object jsonTemplate) {
-        ObjectMapper Obj = new ObjectMapper();
-        try {
-            this.jsonTemplate = Obj.writeValueAsString(jsonTemplate);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public JsonTemplate setJsonTemplates(JsonTemplate jsonTemplate) {
         jsonTemplates.add(jsonTemplate);
         return jsonTemplate;
+    }
+
+    public PostCreateTemplate setPostCreateTemplates(PostCreateTemplate postCreateTemplate) {
+        postCreateTemplates.add(postCreateTemplate);
+        return postCreateTemplate;
     }
 }

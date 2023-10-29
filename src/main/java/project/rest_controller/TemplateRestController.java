@@ -1,6 +1,5 @@
 package project.rest_controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,15 +29,16 @@ public class TemplateRestController {
     }
 
     @PostMapping
-    public  ResponseEntity<Template> createTemplate(@RequestBody Template template) {
-        return new ResponseEntity<>(templateService.createTemplate(template), HttpStatus.CREATED);
+    public  ResponseEntity<Template> createTemplate(@RequestBody TemplateDto templateDto) {
+//        Template saveTemplate = templateService.createTemplate(templateDto);
+        return new ResponseEntity<>(templateService.createTemplate(templateDto), HttpStatus.CREATED);
     }
 
     @PatchMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
             @PathVariable("templateId") Long templateId,
-            @RequestBody Template template) throws JsonProcessingException {
-        return new ResponseEntity<>(templateService.updateTemplate(templateId, template), HttpStatus.OK);
+            @RequestBody TemplateDto templateDto) {
+        return new ResponseEntity<>(templateService.updateTemplate(templateId, templateDto), HttpStatus.OK);
     }
     @DeleteMapping(value = "/{templateId}")
     public void deleteByIdTemplate(@PathVariable("templateId") Long templateId) {
