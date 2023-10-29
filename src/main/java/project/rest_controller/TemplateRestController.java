@@ -30,7 +30,6 @@ public class TemplateRestController {
 
     @PostMapping
     public  ResponseEntity<Template> createTemplate(@RequestBody TemplateDto templateDto) {
-//        Template saveTemplate = templateService.createTemplate(templateDto);
         return new ResponseEntity<>(templateService.createTemplate(templateDto), HttpStatus.CREATED);
     }
 

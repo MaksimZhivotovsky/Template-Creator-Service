@@ -6,6 +6,7 @@ import lombok.*;
 import project.entity.JsonTemplate;
 import project.entity.PostCreateTemplate;
 import project.mapper.JsonTemplateMapper;
+import project.mapper.PostCreateTemplateMapper;
 
 import java.util.List;
 
@@ -42,12 +43,13 @@ public class TemplateDto {
     }
 
     public JsonTemplate setJsonTemplates(JsonTemplateDto jsonTemplateDto) {
-        JsonTemplate jsonTemplate1 = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
-        jsonTemplates.add(jsonTemplate1);
-        return jsonTemplate1;
+        JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
+        jsonTemplates.add(jsonTemplate);
+        return jsonTemplate;
     }
 
-    public PostCreateTemplate setPostCreateTemplates(PostCreateTemplate postCreateTemplate) {
+    public PostCreateTemplate setPostCreateTemplates(PostCreateTemplateDto postCreateTemplateDto) {
+        PostCreateTemplate postCreateTemplate = PostCreateTemplateMapper.mapToPostCreateTemplate(postCreateTemplateDto);
         postCreateTemplates.add(postCreateTemplate);
         return postCreateTemplate;
     }

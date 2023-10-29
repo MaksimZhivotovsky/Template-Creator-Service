@@ -36,12 +36,4 @@ public class PostCreateTemplate {
     @JsonBackReference
     private Template template;
 
-    public void setJsonValue(Object jsonValue) {
-        ObjectMapper Obj = new ObjectMapper();
-        try {
-            this.jsonValue = Obj.writeValueAsString(jsonValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -15,12 +15,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TemplateServiceImpl implements TemplateService {
 
     private final TemplateRepository templateRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Template> getAllTemplates() {
         return templateRepository.findAll();
     }
@@ -58,6 +58,7 @@ public class TemplateServiceImpl implements TemplateService {
         Optional<Template> template = templateRepository.findById(templateId);
         checkTemplate(templateId);
         template.get().setIsArchive(true);
+        templateRepository.save(template.get());
     }
 
     private void checkTemplate(Long templateId) {

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.dto.JsonTemplateDto;
 import project.entity.JsonTemplate;
 import project.entity.Template;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JsonTemplateServiceImpl implements JsonTemplateService {
 
     private final JsonTemplateRepository jsonTemplateRepository;
@@ -46,11 +48,11 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
 
     @Override
     public void deleteByIdJsonTemplate(Long jsonTemplateId) {
-        Optional<JsonTemplate> requestData = jsonTemplateRepository.findById(jsonTemplateId);
-        if(requestData.isEmpty()) {
+        Optional<JsonTemplate> jsonTemplate = jsonTemplateRepository.findById(jsonTemplateId);
+        if(jsonTemplate.isEmpty()) {
             throw new RuntimeException("Такого запроса для шаблона нет id : " + jsonTemplateId);
         }
-        requestData.get().setIsArchive(true);
+        jsonTemplate.get().setIsArchive(true);
     }
 
     @Override
@@ -60,21 +62,23 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
 
     @Override
     public JsonTemplate updateJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto)  {
+        Optional<Template> template = templateRepository.findById(templateId);
         checkTemplate(templateId);
         JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
+        jsonTemplate.setTemplate(template.get());
         return jsonTemplateRepository.save(jsonTemplate);
     }
 
     @Override
     public Object getJsonTemplate(Long templateId) {
-        Optional<JsonTemplate> historyTemplate =
+        Optional<JsonTemplate> jsonTemplate =
                 jsonTemplateRepository.findFirstByTemplateTemplateIdOrderByTimestampDesc(templateId);
 
-        if(historyTemplate.isEmpty()) {
+        if(jsonTemplate.isEmpty()) {
             Optional<Template> template = templateRepository.findById(templateId);
             return parserJson(template.get().getJsonTemplate());
         }
-        return parserJson(historyTemplate.get().getJsonValue());
+        return parserJson(jsonTemplate.get().getJsonValue());
 
     }
 
