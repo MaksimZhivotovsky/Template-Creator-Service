@@ -1,5 +1,6 @@
 package project.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "templateId")
 @ToString(of = {"templateId","name"})
 @Table(name = "templates")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Template {
 
     @Id

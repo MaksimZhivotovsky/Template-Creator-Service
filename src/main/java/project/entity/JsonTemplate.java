@@ -1,6 +1,7 @@
 package project.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.Date;
 @EqualsAndHashCode(of = "jsonTemplateId")
 @NoArgsConstructor
 @Table(name = "json_templates")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JsonTemplate {
 
     @Id
@@ -24,7 +26,7 @@ public class JsonTemplate {
     private String jsonValue;
 
     @Column(name = "is_archive")
-    private Boolean isArchive = false;
+    private Boolean isArchive;
 
     @Column(name = "timestamp")
     private Date timestamp = new Date();

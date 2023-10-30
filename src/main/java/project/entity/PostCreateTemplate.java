@@ -1,6 +1,7 @@
 package project.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
@@ -11,10 +12,11 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@ToString(of = {"postCreateTemplate"})
+@ToString(of = {"jsonValue"})
 @EqualsAndHashCode(of = "postCreateTemplateId")
 @NoArgsConstructor
 @Table(name = "post_create_template")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostCreateTemplate {
 
     @Id
@@ -26,10 +28,10 @@ public class PostCreateTemplate {
     private String jsonValue;
 
     @Column(name = "is_archive")
-    private Boolean isArchive = false;
+    private Boolean isArchive;
 
     @Column(name = "timestamp")
-    private Date timestamp = new Date();
+    private Date timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id")

@@ -1,5 +1,6 @@
 package project.rest_controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,9 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/templates")
-public class TemplateRestController {
+@Tag(name="TemplateRestControllerV1",
+        description="Работа с шаблона")
+public class TemplateRestControllerV1 {
 
     private final TemplateService templateService;
 
