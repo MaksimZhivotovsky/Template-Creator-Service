@@ -27,9 +27,9 @@ public class JsonTemplateRestControllerV1 {
             description = "Позволяет получить всю историю изменений конкретного шаблона"
     )
     @GetMapping
-    public ResponseEntity<List<JsonTemplate>> getAllByTemplateIdJsonTemplate(
+    public ResponseEntity<List<JsonTemplateDto>> getAllByTemplateIdJsonTemplate(
             @PathVariable("templateId") Long templateId) {
-        return new ResponseEntity<>(jsonTemplateService.findAllByTemplateId(templateId), HttpStatus.OK);
+        return new ResponseEntity<>(jsonTemplateService.getAllByTemplateId(templateId), HttpStatus.OK);
     }
 
     @Operation(

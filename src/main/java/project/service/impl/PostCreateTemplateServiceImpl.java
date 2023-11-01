@@ -73,9 +73,9 @@ public class PostCreateTemplateServiceImpl implements PostCreateTemplateService 
                 postCreateTemplateRepository.findFirstByTemplateTemplateIdOrderByTimestampDesc(templateId);
         if(postCreateTemplate.isEmpty()) {
             Optional<Template> template = templateRepository.findById(templateId);
-            return parserJson(template.get().getJsonTemplate());
+            return template.get().getJsonTemplate();
         }
-        return parserJson(postCreateTemplate.get().getJsonValue());
+        return postCreateTemplate.get().getJsonValue();
     }
 
     private Object parserJson(String parse) {

@@ -2,9 +2,18 @@ package project.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
+import project.utils.ObjectMapperUtil;
+import project.utils.ParseJson;
 
 import javax.persistence.*;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,11 +45,11 @@ public class Template {
 
     @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<JsonTemplate> jsonTemplates;
+    private List<JsonTemplate> jsonTemplates = new ArrayList<>();
 
     @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<PostCreateTemplate> postCreateTemplates;
+    private List<PostCreateTemplate> postCreateTemplates = new ArrayList<>();
 
     public JsonTemplate setJsonTemplates(JsonTemplate jsonTemplate) {
         jsonTemplates.add(jsonTemplate);
@@ -50,5 +59,21 @@ public class Template {
     public PostCreateTemplate setPostCreateTemplates(PostCreateTemplate postCreateTemplate) {
         postCreateTemplates.add(postCreateTemplate);
         return postCreateTemplate;
+    }
+
+    public void setJsonTemplate(Object jsonTemplate) {
+        this.jsonTemplate = ObjectMapperUtil.setValue(jsonTemplate);
+    }
+
+    public void setPostCreateTemplate(Object jsonTemplate) {
+        this.postCreateTemplate = ObjectMapperUtil.setValue(jsonTemplate);
+    }
+
+    public Object getJsonTemplate() {
+        return ParseJson.parse(this.jsonTemplate);
+    }
+
+    public Object getPostCreateTemplate() {
+        return ParseJson.parse(this.postCreateTemplate);
     }
 }

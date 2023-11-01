@@ -20,6 +20,7 @@ import project.repository.TemplateRepository;
 import project.service.JsonTemplateService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +43,9 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     }
 
     @Override
-    public Optional<JsonTemplate> getByIdJsonTemplate(Long jsonTemplateId) {
-        return jsonTemplateRepository.findById(jsonTemplateId);
+    public Optional<JsonTemplateDto> getByIdJsonTemplate(Long jsonTemplateId) {
+        Optional<JsonTemplate> jsonTemplate = jsonTemplateRepository.findById(jsonTemplateId);
+        return Optional.of(JsonTemplateMapper.mapToJsonTemplateDto(jsonTemplate.get()));
     }
 
     @Override
@@ -56,8 +58,12 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     }
 
     @Override
-    public List<JsonTemplate> findAllByTemplateId(Long templateId) {
-        return jsonTemplateRepository.findAllByTemplateTemplateId(templateId);
+    public List<JsonTemplateDto> getAllByTemplateId(Long templateId) {
+        List<JsonTemplateDto> jsonTemplateDtoList = new ArrayList<>();
+        for(JsonTemplate jsonTemplate : jsonTemplateRepository.findAllByTemplateTemplateId(templateId)) {
+            jsonTemplateDtoList.add(JsonTemplateMapper.mapToJsonTemplateDto(jsonTemplate));
+        }
+        return jsonTemplateDtoList;
     }
 
     @Override
@@ -76,29 +82,12 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
 
         if(jsonTemplate.isEmpty()) {
             Optional<Template> template = templateRepository.findById(templateId);
-            return parserJson(template.get().getJsonTemplate());
+            return template.get().getJsonTemplate();
         }
-        return parserJson(jsonTemplate.get().getJsonValue());
+        return jsonTemplate.get().getJsonValue();
 
     }
 
-    private Object parserJson(String parse) {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        JsonParser parser;
-        try {
-            parser = factory.createParser(parse);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        JsonNode actualObj;
-        try {
-            actualObj = mapper.readTree(parser);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return actualObj;
-    }
 
     private void checkTemplate(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);

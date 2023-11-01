@@ -22,12 +22,12 @@ public class TemplateRestControllerV1 {
     private final TemplateService templateService;
 
     @GetMapping
-    public ResponseEntity<List<Template>> getAllTemplates() {
+    public ResponseEntity<List<TemplateDto>> getAllTemplates() {
         return new ResponseEntity<>(templateService.getAllTemplates(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{templateId}")
-    public ResponseEntity<Optional<Template>> getByIdTemplate(@PathVariable("templateId") Long templateId) {
+    public ResponseEntity<Optional<TemplateDto>> getByIdTemplate(@PathVariable("templateId") Long templateId) {
         return new ResponseEntity<>(templateService.getByIdTemplate(templateId), HttpStatus.OK);
     }
 
@@ -36,7 +36,7 @@ public class TemplateRestControllerV1 {
         return new ResponseEntity<>(templateService.createTemplate(templateDto), HttpStatus.CREATED);
     }
 
-    @PatchMapping(value = "/{templateId}")
+    @PutMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
             @PathVariable("templateId") Long templateId,
             @RequestBody TemplateDto templateDto) {
