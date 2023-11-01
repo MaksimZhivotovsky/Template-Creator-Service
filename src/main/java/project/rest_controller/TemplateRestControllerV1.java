@@ -22,7 +22,7 @@ public class TemplateRestControllerV1 {
     private final TemplateService templateService;
 
     @GetMapping
-    public ResponseEntity<List<Template>> getAllTemplates() {
+    public ResponseEntity<List<TemplateDto>> getAllTemplates() {
         return new ResponseEntity<>(templateService.getAllTemplates(), HttpStatus.OK);
     }
 

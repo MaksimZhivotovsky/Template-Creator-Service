@@ -1,56 +1,69 @@
 package project.dto;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
-import project.entity.JsonTemplate;
-import project.entity.PostCreateTemplate;
-import project.mapper.JsonTemplateMapper;
-import project.mapper.PostCreateTemplateMapper;
 
-import java.util.List;
+import java.io.IOException;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TemplateDto {
 
     private String name;
     private String jsonTemplate;
     private String postCreateTemplate;
 
-    private List<JsonTemplate> jsonTemplates;
-
-    private List<PostCreateTemplate> postCreateTemplates;
-
     public void setJsonTemplate(Object jsonTemplate) {
-        ObjectMapper Obj = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            this.jsonTemplate = Obj.writeValueAsString(jsonTemplate);
+            this.jsonTemplate = objectMapper.writeValueAsString(jsonTemplate);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    public Object getJsonTemplateObject() {
+        return parserJson(this.jsonTemplate);
     }
 
     public void setPostCreateTemplate(Object jsonTemplate) {
-        ObjectMapper Obj = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            this.postCreateTemplate = Obj.writeValueAsString(jsonTemplate);
+            this.postCreateTemplate = objectMapper.writeValueAsString(jsonTemplate);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public JsonTemplate setJsonTemplates(JsonTemplateDto jsonTemplateDto) {
-        JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
-        jsonTemplates.add(jsonTemplate);
-        return jsonTemplate;
+    public Object getPostCreateTemplateObject() {
+        return parserJson(this.postCreateTemplate);
     }
 
-    public PostCreateTemplate setPostCreateTemplates(PostCreateTemplateDto postCreateTemplateDto) {
-        PostCreateTemplate postCreateTemplate = PostCreateTemplateMapper.mapToPostCreateTemplate(postCreateTemplateDto);
-        postCreateTemplates.add(postCreateTemplate);
-        return postCreateTemplate;
+
+
+    private Object parserJson(String parse) {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        JsonParser parser;
+        try {
+            parser = factory.createParser(parse);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        JsonNode actualObj;
+        try {
+            actualObj = mapper.readTree(parser);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return actualObj;
     }
 }

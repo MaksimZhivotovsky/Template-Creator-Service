@@ -10,6 +10,7 @@ import project.mapper.TemplateMapper;
 import project.repository.TemplateRepository;
 import project.service.TemplateService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +22,12 @@ public class TemplateServiceImpl implements TemplateService {
     private final TemplateRepository templateRepository;
 
     @Override
-    public List<Template> getAllTemplates() {
-        return templateRepository.findAll();
+    public List<TemplateDto> getAllTemplates() {
+        List<TemplateDto> templateList = new ArrayList<>();
+        for (Template template : templateRepository.findAll()) {
+            templateList.add(TemplateMapper.mapToTemplateDto(template));
+        }
+        return templateList;
     }
 
     @Override
@@ -46,9 +51,9 @@ public class TemplateServiceImpl implements TemplateService {
         if(templateDto.getName() != null) {
             dataTemplate.get().setName(templateDto.getName());
         }
-        if(templateDto.getJsonTemplate() != null) {
-            dataTemplate.get().setJsonTemplate(dataTemplate.get().getJsonTemplate());
-        }
+//        if(templateDto.getJsonTemplate() != null) {
+//            dataTemplate.get().setJsonTemplate(dataTemplate.get().getJsonTemplate());
+//        }
 
         return dataTemplate.get();
     }

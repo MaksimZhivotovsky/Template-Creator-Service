@@ -47,8 +47,10 @@ public class Template {
         return jsonTemplate;
     }
 
+
     public PostCreateTemplate setPostCreateTemplates(PostCreateTemplate postCreateTemplate) {
         postCreateTemplates.add(postCreateTemplate);
         return postCreateTemplate;
     }
+
 }
