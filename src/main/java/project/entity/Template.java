@@ -13,6 +13,7 @@ import project.utils.ParseJson;
 
 import javax.persistence.*;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
 @ToString(of = {"templateId","name"})
 @Table(name = "templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Template {
+public class Template implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

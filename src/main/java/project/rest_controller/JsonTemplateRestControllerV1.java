@@ -27,7 +27,7 @@ public class JsonTemplateRestControllerV1 {
             description = "Позволяет получить всю историю изменений конкретного шаблона"
     )
     @GetMapping
-    public ResponseEntity<List<JsonTemplateDto>> getAllByTemplateIdJsonTemplate(
+    public ResponseEntity<List<Object>> getAllByTemplateIdJsonTemplate(
             @PathVariable("templateId") Long templateId) {
         return new ResponseEntity<>(jsonTemplateService.getAllByTemplateId(templateId), HttpStatus.OK);
     }
@@ -43,25 +43,6 @@ public class JsonTemplateRestControllerV1 {
         return new ResponseEntity<>(jsonTemplateService.createJsonTemplate(templateId, jsonTemplateDto), HttpStatus.CREATED);
     }
 
-    @Operation(
-            summary = "Обновление запроса шаблона",
-            description = "Позволяет обновить запрос шаблона"
-    )
-    @PutMapping()
-    public ResponseEntity<JsonTemplate> updateJsonTemplate(
-            @PathVariable("templateId") Long templateId,
-            @RequestBody JsonTemplateDto jsonTemplateDto) {
-        return new ResponseEntity<>(jsonTemplateService.updateJsonTemplate(templateId, jsonTemplateDto), HttpStatus.OK);
-    }
-
-    @Operation(
-            summary = "Получение последнего изменения запроса шаблона",
-            description = "Позволяет получить всю историю изменений конкретного шаблона"
-    )
-    @GetMapping(value = "/last")
-    public ResponseEntity<Object> getJsonTemplateLast(@PathVariable("templateId") Long templateId) {
-        return new ResponseEntity<>(jsonTemplateService.getJsonTemplate(templateId), HttpStatus.OK);
-    }
 
     @Operation(
             summary = "Удаление запроса шаблона",

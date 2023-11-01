@@ -18,6 +18,8 @@ import project.mapper.JsonTemplateMapper;
 import project.repository.JsonTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.JsonTemplateService;
+import project.utils.ObjectMapperUtil;
+import project.utils.ParseJson;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,12 +45,6 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     }
 
     @Override
-    public Optional<JsonTemplateDto> getByIdJsonTemplate(Long jsonTemplateId) {
-        Optional<JsonTemplate> jsonTemplate = jsonTemplateRepository.findById(jsonTemplateId);
-        return Optional.of(JsonTemplateMapper.mapToJsonTemplateDto(jsonTemplate.get()));
-    }
-
-    @Override
     public void deleteByIdJsonTemplate(Long jsonTemplateId) {
         Optional<JsonTemplate> jsonTemplate = jsonTemplateRepository.findById(jsonTemplateId);
         if(jsonTemplate.isEmpty()) {
@@ -58,35 +54,14 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     }
 
     @Override
-    public List<JsonTemplateDto> getAllByTemplateId(Long templateId) {
-        List<JsonTemplateDto> jsonTemplateDtoList = new ArrayList<>();
+    public List<Object> getAllByTemplateId(Long templateId) {
+        List<Object> jsonTemplateDtoList = new ArrayList<>();
         for(JsonTemplate jsonTemplate : jsonTemplateRepository.findAllByTemplateTemplateId(templateId)) {
-            jsonTemplateDtoList.add(JsonTemplateMapper.mapToJsonTemplateDto(jsonTemplate));
+            jsonTemplateDtoList.add(ParseJson.parse(jsonTemplate.getJsonValue()));
         }
         return jsonTemplateDtoList;
     }
 
-    @Override
-    public JsonTemplate updateJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto)  {
-        Optional<Template> template = templateRepository.findById(templateId);
-        checkTemplate(templateId);
-        JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
-        jsonTemplate.setTemplate(template.get());
-        return jsonTemplateRepository.save(jsonTemplate);
-    }
-
-    @Override
-    public Object getJsonTemplate(Long templateId) {
-        Optional<JsonTemplate> jsonTemplate =
-                jsonTemplateRepository.findFirstByTemplateTemplateIdOrderByTimestampDesc(templateId);
-
-        if(jsonTemplate.isEmpty()) {
-            Optional<Template> template = templateRepository.findById(templateId);
-            return template.get().getJsonTemplate();
-        }
-        return jsonTemplate.get().getJsonValue();
-
-    }
 
 
     private void checkTemplate(Long templateId) {

@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
+import project.utils.ObjectMapperUtil;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -17,7 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Table(name = "post_create_template")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostCreateTemplate {
+public class PostCreateTemplate implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +39,9 @@ public class PostCreateTemplate {
     @JoinColumn(name = "template_id")
     @JsonBackReference
     private Template template;
+
+    public void setJsonValue(Object jsonTemplate) {
+        this.jsonValue = ObjectMapperUtil.setValue(jsonTemplate);
+    }
 
 }
