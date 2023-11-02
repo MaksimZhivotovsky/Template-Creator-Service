@@ -1,12 +1,6 @@
 package project.service.impl;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
-
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +12,8 @@ import project.mapper.JsonTemplateMapper;
 import project.repository.JsonTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.JsonTemplateService;
-import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,8 +53,6 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
         }
         return jsonTemplateDtoList;
     }
-
-
 
     private void checkTemplate(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);

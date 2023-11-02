@@ -1,8 +1,6 @@
 package project.mapper;
 
-import project.dto.JsonTemplateDto;
 import project.dto.TemplateDto;
-import project.entity.JsonTemplate;
 import project.entity.Template;
 
 public class TemplateMapper {

@@ -7,7 +7,7 @@ import project.utils.ObjectMapperUtil;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,7 +31,7 @@ public class JsonTemplate implements Serializable {
     private Boolean isArchive;
 
     @Column(name = "timestamp")
-    private Date timestamp = new Date();
+    private LocalDateTime timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id")

@@ -7,8 +7,6 @@ import project.entity.Template;
 import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
-import javax.persistence.Transient;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

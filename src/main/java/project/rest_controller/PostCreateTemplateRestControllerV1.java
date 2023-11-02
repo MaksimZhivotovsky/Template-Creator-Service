@@ -26,14 +26,14 @@ public class PostCreateTemplateRestControllerV1 {
             description = "Позволяет получить всю историю изменений конкретного шаблона"
     )
     @GetMapping
-    public ResponseEntity<List<PostCreateTemplate>> getAllByTemplateIdPostCreateTemplate(
+    public ResponseEntity<List<Object>> getAllByTemplateIdPostCreateTemplate(
             @PathVariable("templateId") Long templateId) {
         return new ResponseEntity<>(postCreateTemplateService.findAllByTemplateId(templateId), HttpStatus.OK);
     }
 
     @Operation(
             summary = "Создание запроса для до создание шаблона",
-            description = "Позволяет создать запрос для до создания шаблона "
+            description = "Позволяет создать запрос для до создания шаблона"
     )
     @PostMapping
     public ResponseEntity<PostCreateTemplate> createPostCreateTemplate(
@@ -44,26 +44,11 @@ public class PostCreateTemplateRestControllerV1 {
     }
 
     @Operation(
-            summary = "Создание  запроса для до создание шаблона",
-            description = "Позволяет обновить запрос для до создания шаблона "
+            summary = "Удаление запроса для до создание шаблона",
+            description = "Позволяет удалить запрос для до создания шаблона(переводит в состояние поля isArchive = true)"
     )
-    @PutMapping()
-    public ResponseEntity<PostCreateTemplate> updatePostCreateTemplate(
-            @PathVariable("templateId") Long templateId,
-            @RequestBody PostCreateTemplateDto postCreateTemplateDto) {
-        return new ResponseEntity<>(postCreateTemplateService.updatePostCreateTemplate(
-                templateId, postCreateTemplateDto), HttpStatus.OK);
+    @DeleteMapping(value = "/{postCreateTemplateId}")
+    public void deleteByIdPostCreateTemplate(@PathVariable("postCreateTemplateId") Long postCreateTemplateId) {
+        postCreateTemplateService.deleteByIdPostCreateTemplate(postCreateTemplateId);
     }
-
-    @Operation(
-            summary = "Получение последнего созданного запроса для до создание шаблона",
-            description = "Позволяет получить последнего созданного запроса для до создание шаблона"
-    )
-    @GetMapping(value = "/last")
-    public ResponseEntity<Object> getPostCreateTemplateLast(
-            @PathVariable("templateId") Long templateId) {
-        return new ResponseEntity<>(postCreateTemplateService.getPostCreateTemplate(
-                templateId), HttpStatus.OK);
-    }
-
 }

@@ -3,7 +3,7 @@ package project.mapper;
 import project.dto.JsonTemplateDto;
 import project.entity.JsonTemplate;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class JsonTemplateMapper {
 
@@ -18,10 +18,9 @@ public class JsonTemplateMapper {
     // Convert JsonTemplateDto into User JPA JsonTemplate
     public static JsonTemplate mapToJsonTemplate(JsonTemplateDto jsonTemplateDto) {
         JsonTemplate jsonTemplate = new JsonTemplate();
-//        jsonTemplate.setJsonValue(jsonTemplateDto.getJsonValue());
         jsonTemplate.setJsonValue(jsonTemplateDto.getJsonValue());
         jsonTemplate.setTemplate(jsonTemplateDto.getTemplate());
-        jsonTemplate.setTimestamp(new Date());
+        jsonTemplate.setTimestamp(LocalDateTime.now());
         jsonTemplate.setIsArchive(false);
         return jsonTemplate;
     }

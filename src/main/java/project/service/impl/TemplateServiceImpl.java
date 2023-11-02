@@ -6,8 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import project.dto.JsonTemplateDto;
 import project.dto.PostCreateTemplateDto;
 import project.dto.TemplateDto;
-import project.entity.JsonTemplate;
-import project.entity.PostCreateTemplate;
 import project.entity.Template;
 import project.exceptions.TemplateNotFoundException;
 import project.mapper.JsonTemplateMapper;

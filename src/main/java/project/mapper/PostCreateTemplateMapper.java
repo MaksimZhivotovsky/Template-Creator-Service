@@ -1,11 +1,9 @@
 package project.mapper;
 
-import project.dto.JsonTemplateDto;
 import project.dto.PostCreateTemplateDto;
-import project.entity.JsonTemplate;
 import project.entity.PostCreateTemplate;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class PostCreateTemplateMapper {
 
@@ -23,7 +21,7 @@ public class PostCreateTemplateMapper {
         PostCreateTemplate postCreateTemplate = new PostCreateTemplate();
         postCreateTemplate.setJsonValue(postCreateTemplateDto.getJsonValue());
         postCreateTemplate.setTemplate(postCreateTemplateDto.getTemplate());
-        postCreateTemplate.setTimestamp(new Date());
+        postCreateTemplate.setTimestamp(LocalDateTime.now());
         postCreateTemplate.setIsArchive(false);
         return postCreateTemplate;
     }
