@@ -2,6 +2,7 @@ package project.rest_controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class JsonTemplateRestControllerV1 {
     )
     @GetMapping
     public ResponseEntity<List<Object>> getAllByTemplateIdJsonTemplate(
-            @PathVariable("templateId") Long templateId) {
+            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId) {
         return new ResponseEntity<>(jsonTemplateService.getAllByTemplateId(templateId), HttpStatus.OK);
     }
 
@@ -38,8 +39,8 @@ public class JsonTemplateRestControllerV1 {
     )
     @PostMapping
     public ResponseEntity<JsonTemplate> createJsonTemplate(
-            @PathVariable("templateId") Long templateId,
-            @RequestBody JsonTemplateDto jsonTemplateDto) {
+            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
+            @RequestBody @Parameter(description = "DTO запроса JSON для создания шаблона") JsonTemplateDto jsonTemplateDto) {
         return new ResponseEntity<>(jsonTemplateService.createJsonTemplate(templateId, jsonTemplateDto), HttpStatus.CREATED);
     }
 
@@ -49,7 +50,8 @@ public class JsonTemplateRestControllerV1 {
             description = "Позволяет удалить запрос шаблона(переводит в состояние поля isArchive = true)"
     )
     @DeleteMapping(value = "/{jsonTemplateId}")
-    public void deleteByIdJsonTemplate(@PathVariable("jsonTemplateId") Long jsonTemplateId) {
+    public void deleteByIdJsonTemplate(@PathVariable("jsonTemplateId")
+            @Parameter(description = "ID идентификатор запроса для создание шаблона") Long jsonTemplateId) {
         jsonTemplateService.deleteByIdJsonTemplate(jsonTemplateId);
     }
 }

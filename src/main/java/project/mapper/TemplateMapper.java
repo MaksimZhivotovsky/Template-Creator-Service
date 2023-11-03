@@ -5,6 +5,8 @@ import project.entity.Template;
 
 public class TemplateMapper {
 
+    private TemplateMapper() {}
+
     // Convert Template JPA Entity into TemplateDto
     public static TemplateDto mapToTemplateDto(Template template) {
         TemplateDto templateDto = new TemplateDto();

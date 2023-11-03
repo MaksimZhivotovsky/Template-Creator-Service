@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import project.dto.JsonTemplateDto;
 import project.entity.JsonTemplate;
 import project.entity.Template;
-import project.exceptions.TemplateNotFoundException;
 import project.mapper.JsonTemplateMapper;
 import project.repository.JsonTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.JsonTemplateService;
+import project.utils.CheckTemplate;
 import project.utils.ParseJson;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     @Override
     public JsonTemplate createJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto) {
         Optional<Template> template = templateRepository.findById(templateId);
-        checkTemplate(templateId);
+        CheckTemplate.checkTemplate(template);
         jsonTemplateDto.setTemplate(template.get());
         JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
 
@@ -52,12 +52,5 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
             jsonTemplateDtoList.add(ParseJson.parse(jsonTemplate.getJsonValue()));
         }
         return jsonTemplateDtoList;
-    }
-
-    private void checkTemplate(Long templateId) {
-        Optional<Template> template = templateRepository.findById(templateId);
-        if(template.isEmpty()) {
-            throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
-        }
     }
 }

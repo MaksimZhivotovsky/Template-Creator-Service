@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 public class JsonTemplateMapper {
 
+    private JsonTemplateMapper() {}
+
     // Convert JsonTemplate JPA Entity into JsonTemplateDto
     public static JsonTemplateDto mapToJsonTemplateDto(JsonTemplate jsonTemplate) {
         return new JsonTemplateDto(

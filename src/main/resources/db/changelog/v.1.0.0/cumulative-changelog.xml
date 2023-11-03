@@ -10,6 +10,6 @@
 
     <include file="create-table/create-table-templates.xml" relativeToChangelogFile="true"/>
     <include file="create-table/create-table-json_templates.xml" relativeToChangelogFile="true"/>
-    <include file="create-table/create-table-templates.xml" relativeToChangelogFile="true"/>
+    <include file="create-table/create-table-post_create_templates.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

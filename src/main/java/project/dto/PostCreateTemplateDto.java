@@ -1,5 +1,6 @@
 package project.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +11,12 @@ import project.utils.ParseJson;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO запроса для до создание шаблона")
 public class PostCreateTemplateDto {
 
+    @Schema(description = "JSON строка для до создания шаблона")
     private String jsonValue;
+    @Schema(description = "Шаблон к которому относится эта строка для до создания шаблона")
     private Template template;
 
     public void setJsonValue(Object jsonValue) {

@@ -24,7 +24,8 @@
     <changeSet id="add-new-column-template_id" author="M_Zhivotovskiy">
         <addColumn tableName="post_create_templates">
             <column name="template_id" type="BIGSERIAL">
-                <constraints foreignKeyName="FK_template_id" references="templates(template_id)"/>
+                <constraints foreignKeyName="FK_template_id" references="templates(template_id)"
+                             nullable="false"/>
             </column>
         </addColumn>
     </changeSet>

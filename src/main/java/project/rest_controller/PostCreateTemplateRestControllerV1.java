@@ -1,6 +1,7 @@
 package project.rest_controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class PostCreateTemplateRestControllerV1 {
     )
     @GetMapping
     public ResponseEntity<List<Object>> getAllByTemplateIdPostCreateTemplate(
-            @PathVariable("templateId") Long templateId) {
+            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId) {
         return new ResponseEntity<>(postCreateTemplateService.findAllByTemplateId(templateId), HttpStatus.OK);
     }
 
@@ -37,8 +38,8 @@ public class PostCreateTemplateRestControllerV1 {
     )
     @PostMapping
     public ResponseEntity<PostCreateTemplate> createPostCreateTemplate(
-            @PathVariable("templateId") Long templateId,
-            @RequestBody PostCreateTemplateDto postCreateTemplateDto) {
+            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
+            @RequestBody @Parameter(description = "DTO запроса JSON для до создания шаблона") PostCreateTemplateDto postCreateTemplateDto) {
         return new ResponseEntity<>(postCreateTemplateService.createPostCreateTemplate(
                 templateId, postCreateTemplateDto), HttpStatus.CREATED);
     }
@@ -48,7 +49,9 @@ public class PostCreateTemplateRestControllerV1 {
             description = "Позволяет удалить запрос для до создания шаблона(переводит в состояние поля isArchive = true)"
     )
     @DeleteMapping(value = "/{postCreateTemplateId}")
-    public void deleteByIdPostCreateTemplate(@PathVariable("postCreateTemplateId") Long postCreateTemplateId) {
+    public void deleteByIdPostCreateTemplate(
+            @PathVariable("postCreateTemplateId")
+            @Parameter(description = "ID идентификатор запроса для до создания запроса") Long postCreateTemplateId) {
         postCreateTemplateService.deleteByIdPostCreateTemplate(postCreateTemplateId);
     }
 }

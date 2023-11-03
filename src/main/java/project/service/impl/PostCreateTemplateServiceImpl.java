@@ -11,6 +11,7 @@ import project.mapper.PostCreateTemplateMapper;
 import project.repository.PostCreateTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.PostCreateTemplateService;
+import project.utils.CheckTemplate;
 import project.utils.ParseJson;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class PostCreateTemplateServiceImpl implements PostCreateTemplateService 
     public PostCreateTemplate createPostCreateTemplate(Long templateId, PostCreateTemplateDto postCreateTemplateDto) {
 
         Optional<Template> template = templateRepository.findById(templateId);
-        checkTemplate(templateId);
+        CheckTemplate.checkTemplate(template);
         postCreateTemplateDto.setTemplate(template.get());
         PostCreateTemplate postCreateTemplate = PostCreateTemplateMapper.mapToPostCreateTemplate(postCreateTemplateDto);
         return postCreateTemplateRepository.save(postCreateTemplate);
@@ -57,12 +58,5 @@ public class PostCreateTemplateServiceImpl implements PostCreateTemplateService 
         }
 
         return postCreateTemplateDtoList;
-    }
-
-    private void checkTemplate(Long templateId) {
-        Optional<Template> template = templateRepository.findById(templateId);
-        if(template.isEmpty()) {
-            throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
-        }
     }
 }
