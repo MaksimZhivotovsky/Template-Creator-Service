@@ -11,7 +11,9 @@ public class CheckTemplate {
 
     public static void checkTemplate(Optional<Template> template) { //CheckTemplate
             if(template.isEmpty()) {
-                throw new TemplateNotFoundException("Такого шаблона нет id : " + template.get().getTemplateId());
+                throw new TemplateNotFoundException("Такого шаблона нет id : " + template.stream()
+                        .map(Template::getTemplateId)
+                        .findFirst());
             }
         }
 }

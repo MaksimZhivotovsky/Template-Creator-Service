@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import project.dto.JsonTemplateDto;
 import project.dto.PostCreateTemplateDto;
 import project.dto.TemplateDto;
+import project.entity.JsonTemplate;
+import project.entity.PostCreateTemplate;
 import project.entity.Template;
 import project.exceptions.TemplateNotFoundException;
 import project.mapper.JsonTemplateMapper;
@@ -16,10 +18,12 @@ import project.repository.PostCreateTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.TemplateService;
 import project.utils.CheckTemplate;
+import project.utils.ObjectMapperUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,32 +80,38 @@ public class TemplateServiceImpl implements TemplateService {
     public Template updateTemplate(Long templateId, TemplateDto templateDto) {
         Optional<Template> dataTemplate = templateRepository.findById(templateId);
         CheckTemplate.checkTemplate(dataTemplate);
-        if(dataTemplate.get().getName().equals(templateDto.getName())
-                && dataTemplate.get().getJsonTemplate().equals(templateDto.getJsonTemplate())
-                && dataTemplate.get().getPostCreateTemplate().equals(templateDto.getPostCreateTemplate())) {
+        TemplateDto check = TemplateMapper.mapToTemplateDto(dataTemplate.get());
+        if(check.equals(templateDto)) {
             throw new TemplateNotFoundException("Такой шаблон уже существует : " + templateDto);
         }
         if(templateDto.getName() != null) {
             dataTemplate.get().setName(templateDto.getName());
         }
 
+        List<String> findJsonTemplates = dataTemplate.get().getJsonTemplates().stream()
+                .map(JsonTemplate::getJsonValue)
+                .collect(Collectors.toList());
+
         if(templateDto.getJsonTemplate() != null
-                && dataTemplate.get().getJsonTemplates().contains(templateDto.getJsonTemplate())) {
+                && !findJsonTemplates.contains(ObjectMapperUtil.setValue(templateDto.getJsonTemplate()))) {
             JsonTemplateDto jsonTemplateDto = new JsonTemplateDto();
             jsonTemplateDto.setTemplate(dataTemplate.get());
             jsonTemplateDto.setJsonValue(templateDto.getJsonTemplate());
-
             jsonTemplateRepository.save(JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto));
         }
 
+        List<String> findPostCreateTemplate = dataTemplate.get().getPostCreateTemplates().stream()
+                .map(PostCreateTemplate::getJsonValue)
+                .collect(Collectors.toList());
+
         if(templateDto.getPostCreateTemplate() != null
-                && dataTemplate.get().getPostCreateTemplates().contains(templateDto.getPostCreateTemplate())) {
+                && !findPostCreateTemplate.contains(ObjectMapperUtil.setValue(templateDto.getPostCreateTemplate()))) {
             PostCreateTemplateDto postCreateTemplateDto = new PostCreateTemplateDto();
             postCreateTemplateDto.setTemplate(dataTemplate.get());
             postCreateTemplateDto.setJsonValue(templateDto.getPostCreateTemplate());
-
             postCreateTemplateRepository.save(PostCreateTemplateMapper.mapToPostCreateTemplate(postCreateTemplateDto));
         }
+
         dataTemplate.get().setPostCreateTemplate(templateDto.getPostCreateTemplate());
         dataTemplate.get().setJsonTemplate(templateDto.getJsonTemplate());
 
