@@ -19,7 +19,7 @@ import java.util.List;
 @ToString(of = {"templateId","name"})
 @Table(name = "templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Template implements Serializable {
+public class Template  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

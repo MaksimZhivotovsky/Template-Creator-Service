@@ -16,9 +16,9 @@ import java.util.Date;
 @ToString(of = {"jsonValue"})
 @EqualsAndHashCode(of = "postCreateTemplateId")
 @NoArgsConstructor
-@Table(name = "post_create_template")
+@Table(name = "post_create_templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PostCreateTemplate implements Serializable {
+public class PostCreateTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "json_templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class JsonTemplate implements Serializable {
+public class JsonTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

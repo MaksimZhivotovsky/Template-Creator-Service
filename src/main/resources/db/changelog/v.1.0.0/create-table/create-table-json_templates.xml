@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-table-json_templates" author="M_Zhivotovskiy">
+        <createTable tableName="json_templates">
+            <column name="json_template_id" type="BIGSERIAL" >
+                <constraints  primaryKey="true"/>
+            </column>
+            <column name="json_value" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_archive" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-new-column-template_id" author="M_Zhivotovskiy">
+        <addColumn tableName="json_templates">
+            <column name="template_id" type="BIGSERIAL">
+                <constraints foreignKeyName="FK_template_id" references="templates(template_id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
