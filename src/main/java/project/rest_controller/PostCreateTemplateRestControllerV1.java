@@ -16,8 +16,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/templates/{templateId}/post_create_template")
-@Tag(name="PostCreateTemplateRestControllerV1",
-        description="Работа с запросом до создание шаблона")
+@Tag(name = "PostCreateTemplateRestControllerV1",
+        description = "Работа с запросом до создание шаблона")
 public class PostCreateTemplateRestControllerV1 {
 
     private final PostCreateTemplateService postCreateTemplateService;

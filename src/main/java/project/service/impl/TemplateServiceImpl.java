@@ -55,18 +55,18 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public Template createTemplate(TemplateDto templateDto) {
         Optional<Template> findName = templateRepository.findByName(templateDto.getName());
-        if(findName.isPresent()) {
+        if (findName.isPresent()) {
             throw new TemplateNotFoundException("Шаблон с таким именем уже существует : " + templateDto.getName());
         }
         Template template = TemplateMapper.mapToTemplate(templateDto);
-        if(template.getJsonTemplate() != null) {
+        if (template.getJsonTemplate() != null) {
             JsonTemplateDto jsonTemplateDto = new JsonTemplateDto();
             jsonTemplateDto.setTemplate(template);
             jsonTemplateDto.setJsonValue(templateDto.getJsonTemplate());
             template.setJsonTemplates(JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto));
         }
 
-        if(template.getPostCreateTemplate() != null) {
+        if (template.getPostCreateTemplate() != null) {
             PostCreateTemplateDto postCreateTemplateDto = new PostCreateTemplateDto();
             postCreateTemplateDto.setTemplate(template);
             postCreateTemplateDto.setJsonValue(templateDto.getPostCreateTemplate());
@@ -81,10 +81,10 @@ public class TemplateServiceImpl implements TemplateService {
         Optional<Template> dataTemplate = templateRepository.findById(templateId);
         CheckTemplate.checkTemplate(dataTemplate);
         TemplateDto check = TemplateMapper.mapToTemplateDto(dataTemplate.get());
-        if(check.equals(templateDto)) {
+        if (check.equals(templateDto)) {
             throw new TemplateNotFoundException("Такой шаблон уже существует : " + templateDto);
         }
-        if(templateDto.getName() != null) {
+        if (templateDto.getName() != null) {
             dataTemplate.get().setName(templateDto.getName());
         }
 
@@ -92,7 +92,7 @@ public class TemplateServiceImpl implements TemplateService {
                 .map(JsonTemplate::getJsonValue)
                 .collect(Collectors.toList());
 
-        if(templateDto.getJsonTemplate() != null
+        if (templateDto.getJsonTemplate() != null
                 && !findJsonTemplates.contains(ObjectMapperUtil.setValue(templateDto.getJsonTemplate()))) {
             JsonTemplateDto jsonTemplateDto = new JsonTemplateDto();
             jsonTemplateDto.setTemplate(dataTemplate.get());
@@ -104,7 +104,7 @@ public class TemplateServiceImpl implements TemplateService {
                 .map(PostCreateTemplate::getJsonValue)
                 .collect(Collectors.toList());
 
-        if(templateDto.getPostCreateTemplate() != null
+        if (templateDto.getPostCreateTemplate() != null
                 && !findPostCreateTemplate.contains(ObjectMapperUtil.setValue(templateDto.getPostCreateTemplate()))) {
             PostCreateTemplateDto postCreateTemplateDto = new PostCreateTemplateDto();
             postCreateTemplateDto.setTemplate(dataTemplate.get());

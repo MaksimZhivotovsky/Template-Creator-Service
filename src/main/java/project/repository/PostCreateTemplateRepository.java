@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface PostCreateTemplateRepository extends JpaRepository<PostCreateTemplate, Long> {
     List<PostCreateTemplate> findAllByTemplateTemplateId(Long templateId);
+
     Optional<PostCreateTemplate> findFirstByTemplateTemplateIdOrderByTimestampDesc(Long templateId);
 }

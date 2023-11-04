@@ -6,8 +6,8 @@
 
     <changeSet id="create-table-json_templates" author="M_Zhivotovskiy">
         <createTable tableName="json_templates">
-            <column name="json_template_id" type="BIGSERIAL" >
-                <constraints  primaryKey="true"/>
+            <column name="json_template_id" type="BIGSERIAL">
+                <constraints primaryKey="true"/>
             </column>
             <column name="json_value" type="TEXT">
                 <constraints nullable="false"/>

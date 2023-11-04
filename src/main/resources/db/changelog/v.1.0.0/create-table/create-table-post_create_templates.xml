@@ -6,8 +6,8 @@
 
     <changeSet id="create-table-post_create_template" author="M_Zhivotovskiy">
         <createTable tableName="post_create_templates">
-            <column name="post_create_template_id" type="BIGSERIAL" >
-                <constraints  primaryKey="true"/>
+            <column name="post_create_template_id" type="BIGSERIAL">
+                <constraints primaryKey="true"/>
             </column>
             <column name="json_value" type="TEXT">
                 <constraints nullable="false"/>

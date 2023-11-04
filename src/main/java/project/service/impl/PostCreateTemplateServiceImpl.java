@@ -44,7 +44,7 @@ public class PostCreateTemplateServiceImpl implements PostCreateTemplateService 
     @Override
     public void deleteByIdPostCreateTemplate(Long postCreateTemplateId) {
         Optional<PostCreateTemplate> postCreateTemplate = postCreateTemplateRepository.findById(postCreateTemplateId);
-        if(postCreateTemplate.isEmpty()) {
+        if (postCreateTemplate.isEmpty()) {
             throw new RuntimeException("Такого досоздание запроса для шаблона нет id : " + postCreateTemplateId);
         }
         postCreateTemplate.get().setIsArchive(true);
@@ -53,7 +53,7 @@ public class PostCreateTemplateServiceImpl implements PostCreateTemplateService 
     @Override
     public List<Object> findAllByTemplateId(Long templateId) {
         List<Object> postCreateTemplateDtoList = new ArrayList<>();
-        for (PostCreateTemplate postCreateTemplate : postCreateTemplateRepository.findAllByTemplateTemplateId(templateId)){
+        for (PostCreateTemplate postCreateTemplate : postCreateTemplateRepository.findAllByTemplateTemplateId(templateId)) {
             postCreateTemplateDtoList.add(ParseJson.parse(postCreateTemplate.getJsonValue()));
         }
 

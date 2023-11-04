@@ -22,6 +22,7 @@ public class PostCreateTemplateDto {
     public void setJsonValue(Object jsonValue) {
         this.jsonValue = ObjectMapperUtil.setValue(jsonValue);
     }
+
     public Object getJsonValue() {
         return ParseJson.parse(this.jsonValue);
     }

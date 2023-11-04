@@ -17,7 +17,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/templates")
-@Tag(name="TemplateRestControllerV1", description="Работа с шаблона")
+@Tag(name = "TemplateRestControllerV1", description = "Работа с шаблона")
 public class TemplateRestControllerV1 {
 
     private final TemplateService templateService;
@@ -46,7 +46,7 @@ public class TemplateRestControllerV1 {
             description = "Позволяет добавить шаблон в БД"
     )
     @PostMapping
-    public  ResponseEntity<Template> createTemplate(
+    public ResponseEntity<Template> createTemplate(
             @RequestBody @Parameter(description = "DTO Шаблона") TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.createTemplate(templateDto), HttpStatus.CREATED);
     }
@@ -57,7 +57,7 @@ public class TemplateRestControllerV1 {
     )
     @PutMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
-            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона")  Long templateId,
+            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
             @RequestBody @Parameter(description = "DTO Шаблона") TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.updateTemplate(templateId, templateDto), HttpStatus.OK);
     }

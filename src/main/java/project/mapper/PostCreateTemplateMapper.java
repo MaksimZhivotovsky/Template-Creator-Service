@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 
 public class PostCreateTemplateMapper {
 
-    private PostCreateTemplateMapper() {}
+    private PostCreateTemplateMapper() {
+    }
 
     // Convert PostCreateTemplate JPA Entity into PostCreateTemplateDto
     public static PostCreateTemplateDto mapToPostCreateTemplateDto(PostCreateTemplate postCreateTemplate) {

@@ -17,8 +17,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/templates/{templateId}/json_template")
-@Tag(name="JsonTemplateRestControllerV1",
-        description="Работа с запросом шаблона")
+@Tag(name = "JsonTemplateRestControllerV1",
+        description = "Работа с запросом шаблона")
 public class JsonTemplateRestControllerV1 {
 
     private final JsonTemplateService jsonTemplateService;
@@ -51,7 +51,7 @@ public class JsonTemplateRestControllerV1 {
     )
     @DeleteMapping(value = "/{jsonTemplateId}")
     public void deleteByIdJsonTemplate(@PathVariable("jsonTemplateId")
-            @Parameter(description = "ID идентификатор запроса для создание шаблона") Long jsonTemplateId) {
+                                       @Parameter(description = "ID идентификатор запроса для создание шаблона") Long jsonTemplateId) {
         jsonTemplateService.deleteByIdJsonTemplate(jsonTemplateId);
     }
 }

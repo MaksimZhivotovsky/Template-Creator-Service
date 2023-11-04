@@ -39,7 +39,7 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     @Override
     public void deleteByIdJsonTemplate(Long jsonTemplateId) {
         Optional<JsonTemplate> jsonTemplate = jsonTemplateRepository.findById(jsonTemplateId);
-        if(jsonTemplate.isEmpty()) {
+        if (jsonTemplate.isEmpty()) {
             throw new RuntimeException("Такого запроса для шаблона нет id : " + jsonTemplateId);
         }
         jsonTemplate.get().setIsArchive(true);
@@ -48,7 +48,7 @@ public class JsonTemplateServiceImpl implements JsonTemplateService {
     @Override
     public List<Object> getAllByTemplateId(Long templateId) {
         List<Object> jsonTemplateDtoList = new ArrayList<>();
-        for(JsonTemplate jsonTemplate : jsonTemplateRepository.findAllByTemplateTemplateId(templateId)) {
+        for (JsonTemplate jsonTemplate : jsonTemplateRepository.findAllByTemplateTemplateId(templateId)) {
             jsonTemplateDtoList.add(ParseJson.parse(jsonTemplate.getJsonValue()));
         }
         return jsonTemplateDtoList;

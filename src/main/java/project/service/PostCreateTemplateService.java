@@ -10,7 +10,10 @@ import java.util.Optional;
 
 public interface PostCreateTemplateService {
     PostCreateTemplate createPostCreateTemplate(Long templateId, PostCreateTemplateDto postCreateTemplateDto);
+
     Optional<PostCreateTemplate> getByIdPostCreateTemplate(Long postCreateTemplateId);
+
     void deleteByIdPostCreateTemplate(Long postCreateTemplateId);
+
     List<Object> findAllByTemplateId(Long templateId);
 }
