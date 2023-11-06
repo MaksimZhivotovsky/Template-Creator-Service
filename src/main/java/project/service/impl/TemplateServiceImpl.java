@@ -96,7 +96,11 @@ public class TemplateServiceImpl implements TemplateService {
         TemplateDto check = TemplateMapper.mapToTemplateDto(dataTemplate.orElseThrow(
                 () ->  new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
         ));
-        if (check.equals(templateDto)) {
+        Optional<Template> findName = templateRepository.findByName(templateDto.getName());
+        if (findName.isPresent()) {
+            throw new TemplateNotFoundException("Шаблон с таким именем уже существует : " + templateDto.getName());
+        }
+        if (check.equals(templateDto) ) {
             throw new TemplateNotFoundException("Такой шаблон уже существует : " + templateDto);
         }
         if (templateDto.getName() != null) {

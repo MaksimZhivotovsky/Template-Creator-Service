@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.dto.JsonTemplateDto;
 import project.dto.PostCreateTemplateDto;
 import project.entity.PostCreateTemplate;
 import project.service.PostCreateTemplateService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +41,7 @@ public class PostCreateTemplateRestControllerV1 {
     @PostMapping
     public ResponseEntity<PostCreateTemplate> createPostCreateTemplate(
             @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
-            @RequestBody @Parameter(description = "DTO запроса JSON для до создания шаблона") PostCreateTemplateDto postCreateTemplateDto) {
+             @RequestBody @Parameter(description = "DTO запроса JSON для до создания шаблона")@Valid PostCreateTemplateDto postCreateTemplateDto) {
         return new ResponseEntity<>(postCreateTemplateService.createPostCreateTemplate(
                 templateId, postCreateTemplateDto), HttpStatus.CREATED);
     }

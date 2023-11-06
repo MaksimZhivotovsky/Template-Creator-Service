@@ -11,6 +11,7 @@ import project.dto.TemplateDto;
 import project.entity.Template;
 import project.service.TemplateService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class TemplateRestControllerV1 {
     )
     @PostMapping
     public ResponseEntity<Template> createTemplate(
-            @RequestBody @Parameter(description = "DTO Шаблона") TemplateDto templateDto) {
+             @RequestBody @Parameter(description = "DTO Шаблона") @Valid TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.createTemplate(templateDto), HttpStatus.CREATED);
     }
 
@@ -58,7 +59,7 @@ public class TemplateRestControllerV1 {
     @PutMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
             @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
-            @RequestBody @Parameter(description = "DTO Шаблона") TemplateDto templateDto) {
+            @RequestBody @Parameter(description = "DTO Шаблона") @Valid TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.updateTemplate(templateId, templateDto), HttpStatus.OK);
     }
 

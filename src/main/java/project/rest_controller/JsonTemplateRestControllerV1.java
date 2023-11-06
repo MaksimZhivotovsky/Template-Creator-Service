@@ -12,6 +12,7 @@ import project.dto.JsonTemplateDto;
 import project.entity.JsonTemplate;
 import project.service.JsonTemplateService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,7 @@ public class JsonTemplateRestControllerV1 {
     @PostMapping
     public ResponseEntity<JsonTemplate> createJsonTemplate(
             @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
-            @RequestBody @Parameter(description = "DTO запроса JSON для создания шаблона") JsonTemplateDto jsonTemplateDto) {
+             @RequestBody @Parameter(description = "DTO запроса JSON для создания шаблона")@Valid JsonTemplateDto jsonTemplateDto) {
         return new ResponseEntity<>(jsonTemplateService.createJsonTemplate(templateId, jsonTemplateDto), HttpStatus.CREATED);
     }
 

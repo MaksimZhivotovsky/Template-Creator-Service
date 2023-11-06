@@ -8,6 +8,9 @@ import project.entity.Template;
 import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
+import javax.validation.constraints.NotBlank;
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,8 +18,10 @@ import project.utils.ParseJson;
 public class PostCreateTemplateDto {
 
     @Schema(description = "JSON строка для до создания шаблона")
+    @NotBlank
     private String jsonValue;
     @Schema(description = "Шаблон к которому относится эта строка для до создания шаблона")
+    @NotBlank
     private Template template;
 
     public void setJsonValue(Object jsonValue) {

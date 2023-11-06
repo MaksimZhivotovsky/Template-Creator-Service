@@ -5,7 +5,7 @@ import lombok.*;
 import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,12 +13,14 @@ import javax.validation.constraints.NotEmpty;
 @Schema(description = "DTO Шаблона")
 public class TemplateDto {
 
-//    @NotEmpty(message = "Поле name не должно быть пустым")
     @Schema(description = "имя шаблона")
+    @NotBlank
     private String name;
     @Schema(description = "JSON создания шаблона")
+    @NotBlank
     private String jsonTemplate;
     @Schema(description = "JSON запроса для до создания шаблона")
+    @NotBlank
     private String postCreateTemplate;
 
     public void setJsonTemplate(Object jsonTemplate) {

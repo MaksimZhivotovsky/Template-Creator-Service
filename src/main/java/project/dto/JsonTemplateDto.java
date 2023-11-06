@@ -8,7 +8,7 @@ import project.entity.Template;
 import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 
 @Data
@@ -17,8 +17,8 @@ import javax.validation.constraints.NotEmpty;
 @Schema(description = "DTO запроса для создания шаблона")
 public class JsonTemplateDto {
 
-    @NotEmpty(message = "Поле jsonValue не должно быть пустым")
     @Schema(description = "JSON строка шаблона")
+    @NotBlank
     private String jsonValue;
     @Schema(description = "Шаблон к которому относится эта строка")
     private Template template;
