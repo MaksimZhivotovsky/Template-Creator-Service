@@ -9,9 +9,11 @@ import java.util.Optional;
 public interface JsonTemplateService {
 
     JsonTemplate createJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto);
-    Optional<JsonTemplate> getByIdJsonTemplate(Long jsonTemplateId);
+
     void deleteByIdJsonTemplate(Long jsonTemplateId);
-    List<JsonTemplate> findAllByTemplateId(Long templateId);
-    JsonTemplate updateJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto);
-    Object getJsonTemplate(Long templateId);
+
+    List<Object> getAllByTemplateId(Long templateId);
+
+    Optional<JsonTemplateDto> getByIdJsonTemplate(Long jsonTemplateId);
+
 }

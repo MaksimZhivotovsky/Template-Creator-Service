@@ -1,105 +1,84 @@
 package project.service.impl;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.dto.PostCreateTemplateDto;
 import project.entity.PostCreateTemplate;
 import project.entity.Template;
+import project.exceptions.PostCreateTemplateNotFoundException;
 import project.exceptions.TemplateNotFoundException;
 import project.mapper.PostCreateTemplateMapper;
 import project.repository.PostCreateTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.PostCreateTemplateService;
+import project.utils.ParseJson;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Slf4j
 public class PostCreateTemplateServiceImpl implements PostCreateTemplateService {
 
     private final PostCreateTemplateRepository postCreateTemplateRepository;
     private final TemplateRepository templateRepository;
 
     @Override
+    @Transactional
+    @CachePut(cacheNames = {"createPostCreateTemplateCache"}, key = "#templateId")
     public PostCreateTemplate createPostCreateTemplate(Long templateId, PostCreateTemplateDto postCreateTemplateDto) {
 
         Optional<Template> template = templateRepository.findById(templateId);
-        checkTemplate(templateId);
-        postCreateTemplateDto.setTemplate(template.get());
+        postCreateTemplateDto.setTemplate(template.orElseThrow(
+                () ->  new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
+        ));
         PostCreateTemplate postCreateTemplate = PostCreateTemplateMapper.mapToPostCreateTemplate(postCreateTemplateDto);
+        log.info("createPostCreateTemplate postCreateTemplate : {} ", postCreateTemplate);
         return postCreateTemplateRepository.save(postCreateTemplate);
     }
 
     @Override
-    public Optional<PostCreateTemplate> getByIdPostCreateTemplate(Long postCreateTemplateId) {
-        return postCreateTemplateRepository.findById(postCreateTemplateId);
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = {"createPostCreateTemplateCache"}, key = "#postCreateTemplateId")
+    public Optional<PostCreateTemplateDto> getByIdPostCreateTemplate(Long postCreateTemplateId) {
+        Optional<PostCreateTemplate> postCreateTemplate = postCreateTemplateRepository.findById(postCreateTemplateId);
+        PostCreateTemplateDto postCreateTemplateDto =PostCreateTemplateMapper
+                .mapToPostCreateTemplateDto(postCreateTemplate.orElseThrow(
+                        () -> new PostCreateTemplateNotFoundException("Такого досоздание запроса для шаблона нет id : " + postCreateTemplateId)
+                ));
+        log.info("getByIdPostCreateTemplate postCreateTemplateDto : {} ", postCreateTemplateDto);
+        return Optional.of(postCreateTemplateDto);
     }
 
     @Override
+    @Transactional
+    @CacheEvict(cacheNames = {"createPostCreateTemplateCache"}, key = "#postCreateTemplateId")
     public void deleteByIdPostCreateTemplate(Long postCreateTemplateId) {
         Optional<PostCreateTemplate> postCreateTemplate = postCreateTemplateRepository.findById(postCreateTemplateId);
-        if(postCreateTemplate.isEmpty()) {
-            throw new RuntimeException("Такого досоздание запроса для шаблона нет id : " + postCreateTemplateId);
+        if (postCreateTemplate.isEmpty()) {
+            throw new PostCreateTemplateNotFoundException("Такого досоздание запроса для шаблона нет id : " + postCreateTemplateId);
         }
+        log.info("deleteByIdPostCreateTemplate postCreateTemplate.setIsArchive(true): {} ", postCreateTemplate);
+        postCreateTemplate.get().setIsArchive(true);
     }
 
     @Override
-    public List<PostCreateTemplate> findAllByTemplateId(Long templateId) {
-        return postCreateTemplateRepository.findAllByTemplateTemplateId(templateId);
-    }
-
-    @Override
-    public PostCreateTemplate updatePostCreateTemplate(Long templateId, PostCreateTemplateDto postCreateTemplateDto) {
-        Optional<Template> template = templateRepository.findById(templateId);
-        checkTemplate(templateId);
-        PostCreateTemplate postCreateTemplate =
-                PostCreateTemplateMapper.mapToPostCreateTemplate(postCreateTemplateDto);
-        postCreateTemplate.setTemplate(template.get());
-        return postCreateTemplateRepository.save(postCreateTemplate);
-    }
-
-    @Override
-    public Object getPostCreateTemplate(Long templateId) {
-
-        Optional<PostCreateTemplate>  postCreateTemplate =
-                postCreateTemplateRepository.findFirstByTemplateTemplateIdOrderByTimestampDesc(templateId);
-        if(postCreateTemplate.isEmpty()) {
-            Optional<Template> template = templateRepository.findById(templateId);
-            return parserJson(template.get().getJsonTemplate());
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = {"createPostCreateTemplateCache"}, key = "#templateId")
+    public List<Object> findAllByTemplateId(Long templateId) {
+        List<Object> postCreateTemplateDtoList = new ArrayList<>();
+        for (PostCreateTemplate postCreateTemplate : postCreateTemplateRepository.findAllByTemplateTemplateId(templateId)) {
+            postCreateTemplateDtoList.add(ParseJson.parse(postCreateTemplate.getJsonValue()));
         }
-        return parserJson(postCreateTemplate.get().getJsonValue());
-    }
 
-    private Object parserJson(String parse) {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        JsonParser parser;
-        try {
-            parser = factory.createParser(parse);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        JsonNode actualObj;
-        try {
-            actualObj = mapper.readTree(parser);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return actualObj;
-    }
-
-    private void checkTemplate(Long templateId) {
-        Optional<Template> template = templateRepository.findById(templateId);
-        if(template.isEmpty()) {
-            throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
-        }
+        log.info("findAllByTemplateId postCreateTemplateDtoList: {} ", postCreateTemplateDtoList);
+        return postCreateTemplateDtoList;
     }
 }

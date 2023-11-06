@@ -5,15 +5,17 @@ import project.entity.Template;
 
 public class TemplateMapper {
 
-    private TemplateMapper() {}
+    private TemplateMapper() {
+    }
+
     // Convert Template JPA Entity into TemplateDto
     public static TemplateDto mapToTemplateDto(Template template) {
-        return new TemplateDto(
-                template.getName(),
-                template.getJsonTemplate(),
-                template.getPostCreateTemplate()
-        );
+        TemplateDto templateDto = new TemplateDto();
+        templateDto.setName(template.getName());
+        templateDto.setJsonTemplate(template.getJsonTemplate());
+        templateDto.setPostCreateTemplate(template.getPostCreateTemplate());
 
+        return templateDto;
     }
 
     // Convert TemplateDto into User JPA Template
@@ -24,7 +26,6 @@ public class TemplateMapper {
         template.setJsonTemplate(templateDto.getJsonTemplate());
         template.setPostCreateTemplate(templateDto.getPostCreateTemplate());
         template.setIsArchive(false);
-
         return template;
     }
 }

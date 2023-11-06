@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface JsonTemplateRepository extends JpaRepository<JsonTemplate, Long> {
     List<JsonTemplate> findAllByTemplateTemplateId(Long templateId);
+
     Optional<JsonTemplate> findFirstByTemplateTemplateIdOrderByTimestampDesc(Long templateId);
 }

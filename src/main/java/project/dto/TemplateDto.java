@@ -1,69 +1,42 @@
 package project.dto;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import project.utils.ObjectMapperUtil;
+import project.utils.ParseJson;
 
-import java.io.IOException;
+import javax.validation.constraints.NotBlank;
 
-@Setter
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Data
+@Schema(description = "DTO Шаблона")
 public class TemplateDto {
 
+    @Schema(description = "имя шаблона")
+    @NotBlank
     private String name;
+    @Schema(description = "JSON создания шаблона")
+    @NotBlank
     private String jsonTemplate;
+    @Schema(description = "JSON запроса для до создания шаблона")
+    @NotBlank
     private String postCreateTemplate;
 
     public void setJsonTemplate(Object jsonTemplate) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            this.jsonTemplate = objectMapper.writeValueAsString(jsonTemplate);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    public Object getJsonTemplateObject() {
-        return parserJson(this.jsonTemplate);
+        this.jsonTemplate = ObjectMapperUtil.setValue(jsonTemplate);
     }
 
     public void setPostCreateTemplate(Object jsonTemplate) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            this.postCreateTemplate = objectMapper.writeValueAsString(jsonTemplate);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        this.postCreateTemplate = ObjectMapperUtil.setValue(jsonTemplate);
     }
 
-    public Object getPostCreateTemplateObject() {
-        return parserJson(this.postCreateTemplate);
+    public Object getJsonTemplate() {
+        return ParseJson.parse(this.jsonTemplate);
     }
 
-
-
-    private Object parserJson(String parse) {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        JsonParser parser;
-        try {
-            parser = factory.createParser(parse);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        JsonNode actualObj;
-        try {
-            actualObj = mapper.readTree(parser);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return actualObj;
+    public Object getPostCreateTemplate() {
+        return ParseJson.parse(this.postCreateTemplate);
     }
+
 }

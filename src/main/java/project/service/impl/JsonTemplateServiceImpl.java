@@ -1,109 +1,84 @@
 package project.service.impl;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.dto.JsonTemplateDto;
 import project.entity.JsonTemplate;
 import project.entity.Template;
+import project.exceptions.JsonTemplateNotFoundException;
 import project.exceptions.TemplateNotFoundException;
 import project.mapper.JsonTemplateMapper;
 import project.repository.JsonTemplateRepository;
 import project.repository.TemplateRepository;
 import project.service.JsonTemplateService;
+import project.utils.ParseJson;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Slf4j
 public class JsonTemplateServiceImpl implements JsonTemplateService {
 
     private final JsonTemplateRepository jsonTemplateRepository;
     private final TemplateRepository templateRepository;
 
     @Override
+    @Transactional
+    @CachePut(cacheNames = {"createJsonTemplateCache"}, key = "#templateId")
     public JsonTemplate createJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto) {
         Optional<Template> template = templateRepository.findById(templateId);
-        checkTemplate(templateId);
-        jsonTemplateDto.setTemplate(template.get());
+        jsonTemplateDto.setTemplate(template.orElseThrow(
+                () ->  new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
+        ));
         JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
 
+        log.info("createJsonTemplate jsonTemplate : {} ", jsonTemplate);
         return jsonTemplateRepository.save(jsonTemplate);
     }
 
     @Override
-    public Optional<JsonTemplate> getByIdJsonTemplate(Long jsonTemplateId) {
-        return jsonTemplateRepository.findById(jsonTemplateId);
-    }
-
-    @Override
+    @Transactional
+    @CacheEvict(cacheNames = {"createJsonTemplateCache"}, key = "#jsonTemplateId")
     public void deleteByIdJsonTemplate(Long jsonTemplateId) {
         Optional<JsonTemplate> jsonTemplate = jsonTemplateRepository.findById(jsonTemplateId);
-        if(jsonTemplate.isEmpty()) {
-            throw new RuntimeException("Такого запроса для шаблона нет id : " + jsonTemplateId);
+        if (jsonTemplate.isEmpty()) {
+            throw new JsonTemplateNotFoundException("Такого запроса для шаблона нет id : " + jsonTemplateId);
         }
+        log.info("deleteByIdJsonTemplate jsonTemplate.setIsArchive(true) : {} ", jsonTemplate);
         jsonTemplate.get().setIsArchive(true);
     }
 
     @Override
-    public List<JsonTemplate> findAllByTemplateId(Long templateId) {
-        return jsonTemplateRepository.findAllByTemplateTemplateId(templateId);
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = {"createJsonTemplateCache"}, key = "#jsonTemplateId")
+    public Optional<JsonTemplateDto> getByIdJsonTemplate(Long jsonTemplateId) {
+        Optional<JsonTemplate> jsonTemplate = jsonTemplateRepository.findById(jsonTemplateId);
+        JsonTemplateDto jsonTemplateDto = JsonTemplateMapper.mapToJsonTemplateDto(jsonTemplate.orElseThrow(
+                () -> new JsonTemplateNotFoundException("Такого запроса для шаблона нет id : " + jsonTemplateId)
+        ));
+
+        log.info("getByIdJsonTemplate jsonTemplateDto : {} ", jsonTemplateDto);
+        return Optional.of(jsonTemplateDto);
     }
 
     @Override
-    public JsonTemplate updateJsonTemplate(Long templateId, JsonTemplateDto jsonTemplateDto)  {
-        Optional<Template> template = templateRepository.findById(templateId);
-        checkTemplate(templateId);
-        JsonTemplate jsonTemplate = JsonTemplateMapper.mapToJsonTemplate(jsonTemplateDto);
-        jsonTemplate.setTemplate(template.get());
-        return jsonTemplateRepository.save(jsonTemplate);
-    }
-
-    @Override
-    public Object getJsonTemplate(Long templateId) {
-        Optional<JsonTemplate> jsonTemplate =
-                jsonTemplateRepository.findFirstByTemplateTemplateIdOrderByTimestampDesc(templateId);
-
-        if(jsonTemplate.isEmpty()) {
-            Optional<Template> template = templateRepository.findById(templateId);
-            return parserJson(template.get().getJsonTemplate());
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = {"createJsonTemplateCache"}, key = "#templateId")
+    public List<Object> getAllByTemplateId(Long templateId) {
+        List<Object> jsonTemplateDtoList = new ArrayList<>();
+        for (JsonTemplate jsonTemplate : jsonTemplateRepository.findAllByTemplateTemplateId(templateId)) {
+            jsonTemplateDtoList.add(ParseJson.parse(jsonTemplate.getJsonValue()));
         }
-        return parserJson(jsonTemplate.get().getJsonValue());
-
-    }
-
-    private Object parserJson(String parse) {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        JsonParser parser;
-        try {
-            parser = factory.createParser(parse);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        JsonNode actualObj;
-        try {
-            actualObj = mapper.readTree(parser);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return actualObj;
-    }
-
-    private void checkTemplate(Long templateId) {
-        Optional<Template> template = templateRepository.findById(templateId);
-        if(template.isEmpty()) {
-            throw new TemplateNotFoundException("Такого шаблона нет id : " + templateId);
-        }
+        log.info("getAllByTemplateId jsonTemplateDtoList : {} ", jsonTemplateDtoList);
+        return jsonTemplateDtoList;
     }
 }

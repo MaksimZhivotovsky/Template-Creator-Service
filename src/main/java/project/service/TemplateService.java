@@ -9,8 +9,12 @@ import java.util.Optional;
 public interface TemplateService {
 
     List<TemplateDto> getAllTemplates();
-    Optional<Template> getByIdTemplate(Long templateId);
+
+    Optional<TemplateDto> getByIdTemplate(Long templateId);
+
     Template createTemplate(TemplateDto template);
+
     Template updateTemplate(Long templateId, TemplateDto template);
+
     void deleteByIdTemplate(Long templateId);
 }
