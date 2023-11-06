@@ -14,4 +14,6 @@ public interface JsonTemplateService {
 
     List<Object> getAllByTemplateId(Long templateId);
 
+    Optional<JsonTemplateDto> getByIdJsonTemplate(Long jsonTemplateId);
+
 }

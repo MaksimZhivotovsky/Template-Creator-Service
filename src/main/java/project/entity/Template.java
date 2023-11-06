@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import project.dto.TemplateDto;
-import project.mapper.TemplateMapper;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +22,8 @@ import java.util.List;
 @ToString(of = {"templateId", "name", "jsonTemplate", "postCreateTemplate"})
 @Table(name = "templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+
+@Cache(region = "templateCache",  usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Шаблон")
 public class Template  {
 

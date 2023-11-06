@@ -13,10 +13,11 @@ import project.entity.JsonTemplate;
 import project.service.JsonTemplateService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/templates/{templateId}/json_template")
+@RequestMapping(value = "/api/v1/templates/{templateId}/json_templates")
 @Tag(name = "JsonTemplateRestControllerV1",
         description = "Работа с запросом шаблона")
 public class JsonTemplateRestControllerV1 {
@@ -31,6 +32,17 @@ public class JsonTemplateRestControllerV1 {
     public ResponseEntity<List<Object>> getAllByTemplateIdJsonTemplate(
             @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId) {
         return new ResponseEntity<>(jsonTemplateService.getAllByTemplateId(templateId), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Получение запроса создание шаблона по id",
+            description = "Позволяет получить запроса создание шаблон по id"
+    )
+    @GetMapping(value = "/{jsonTemplateId}")
+    public ResponseEntity<Optional<JsonTemplateDto>> getByIdJsonTemplate(
+//            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
+            @PathVariable("jsonTemplateId") @Parameter(description = "ID идентификатор запроса шаблона") Long jsonTemplateId) {
+        return new ResponseEntity<>(jsonTemplateService.getByIdJsonTemplate(jsonTemplateId), HttpStatus.OK);
     }
 
     @Operation(
@@ -50,8 +62,9 @@ public class JsonTemplateRestControllerV1 {
             description = "Позволяет удалить запрос шаблона(переводит в состояние поля isArchive = true)"
     )
     @DeleteMapping(value = "/{jsonTemplateId}")
-    public void deleteByIdJsonTemplate(@PathVariable("jsonTemplateId")
-                                       @Parameter(description = "ID идентификатор запроса для создание шаблона") Long jsonTemplateId) {
+    public void deleteByIdJsonTemplate(
+//            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
+            @PathVariable("jsonTemplateId") @Parameter(description = "ID идентификатор запроса для создание шаблона") Long jsonTemplateId) {
         jsonTemplateService.deleteByIdJsonTemplate(jsonTemplateId);
     }
 }

@@ -7,15 +7,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.dto.JsonTemplateDto;
 import project.dto.PostCreateTemplateDto;
 import project.entity.PostCreateTemplate;
 import project.service.PostCreateTemplateService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/templates/{templateId}/post_create_template")
+@RequestMapping(value = "/api/v1/templates/{templateId}/post_create_templates")
 @Tag(name = "PostCreateTemplateRestControllerV1",
         description = "Работа с запросом до создание шаблона")
 public class PostCreateTemplateRestControllerV1 {
@@ -53,5 +55,16 @@ public class PostCreateTemplateRestControllerV1 {
             @PathVariable("postCreateTemplateId")
             @Parameter(description = "ID идентификатор запроса для до создания запроса") Long postCreateTemplateId) {
         postCreateTemplateService.deleteByIdPostCreateTemplate(postCreateTemplateId);
+    }
+
+    @Operation(
+            summary = "Получение запроса для до создание шаблона по id",
+            description = "Позволяет получить запрос для до создание шаблон по id"
+    )
+    @GetMapping(value = "/{postCreateTemplateId}")
+    public ResponseEntity<Optional<PostCreateTemplateDto>> getByIdPostCreateTemplate(
+//            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
+            @PathVariable("postCreateTemplateId") @Parameter(description = "ID идентификатор запроса для до создония шаблона") Long postCreateTemplateId) {
+        return new ResponseEntity<>(postCreateTemplateService.getByIdPostCreateTemplate(postCreateTemplateId), HttpStatus.OK);
     }
 }
