@@ -10,30 +10,28 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import project.utils.ObjectMapperUtil;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @ToString(of = {"jsonValue"})
-@EqualsAndHashCode(of = "jsonTemplateId")
+@EqualsAndHashCode(of = "updateValueId")
 @NoArgsConstructor
-@Table(name = "json_templates")
+@Table(name = "update_values")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
-@Cache(region = "jsonTemplateCache", usage = CacheConcurrencyStrategy.READ_WRITE)
-@Schema(description = "Запрос для создание шаблона")
-public class JsonTemplate implements Serializable{
+@Cache( usage = CacheConcurrencyStrategy.READ_WRITE)
+@Schema(description = "Запрос для до создание шаблона")
+public class UpdateValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "json_template_id")
-    @Schema(description = "Идентификатор запроса для создания шаблона")
-    private Long jsonTemplateId;
+    @Column(name = "update_value_id")
+    @Schema(description = "Идентификатор запроса для до создания шаблона")
+    private Long updateValueId;
 
     @Column(name = "json_value")
-    @Schema(description = "JSON строка для создание шаблона")
+    @Schema(description = "JSON строка для до создание шаблона")
     private String jsonValue;
 
     @Column(name = "is_archive")
@@ -45,10 +43,10 @@ public class JsonTemplate implements Serializable{
     private LocalDateTime timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "template_id")
+    @JoinColumn(name = "value_id")
     @JsonBackReference
     @Schema(description = "Шаблон")
-    private Template template;
+    private Value value;
 
     public void setJsonValue(Object jsonTemplate) {
         this.jsonValue = ObjectMapperUtil.setValue(jsonTemplate);

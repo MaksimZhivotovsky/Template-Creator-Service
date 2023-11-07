@@ -8,8 +8,8 @@
         <tagDatabase tag="v.1.0.0"/>
     </changeSet>
 
-    <include file="create-table/create-table-templates.xml" relativeToChangelogFile="true"/>
-    <include file="create-table/create-table-json_templates.xml" relativeToChangelogFile="true"/>
-    <include file="create-table/create-table-post_create_templates.xml" relativeToChangelogFile="true"/>
+    <include file="create-table/create-table-values.xml" relativeToChangelogFile="true"/>
+    <include file="create-table/create-table-create_values.xml" relativeToChangelogFile="true"/>
+    <include file="create-table/create-table-update_values.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

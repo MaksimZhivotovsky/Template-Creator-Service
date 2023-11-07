@@ -10,33 +10,34 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import project.utils.ObjectMapperUtil;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @ToString(of = {"jsonValue"})
-@EqualsAndHashCode(of = "postCreateTemplateId")
+@EqualsAndHashCode(of = "createValueId")
 @NoArgsConstructor
-@Table(name = "post_create_templates")
+@Table(name = "create_values")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
-@Cache( usage = CacheConcurrencyStrategy.READ_WRITE)
-@Schema(description = "Запрос для до создание шаблона")
-public class PostCreateTemplate {
+@Cache(region = "createValueCache", usage = CacheConcurrencyStrategy.READ_WRITE)
+@Schema(description = "Запрос для создание шаблона")
+public class CreateValue implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_create_template_id")
-    @Schema(description = "Идентификатор запроса для до создания шаблона")
-    private Long postCreateTemplateId;
+    @Column(name = "create_value_id")
+    @Schema(description = "Идентификатор запроса для создания шаблона")
+    private Long createValueId;
 
     @Column(name = "json_value")
-    @Schema(description = "JSON строка для до создание шаблона")
+    @Schema(description = "JSON строка для создание шаблона")
     private String jsonValue;
 
     @Column(name = "is_archive")
-    @Schema(description = "Флаг находится ли строка для до создание шаблона в архиве")
+    @Schema(description = "Флаг находится ли строка для создание шаблона в архиве")
     private Boolean isArchive;
 
     @Column(name = "timestamp")
@@ -44,10 +45,10 @@ public class PostCreateTemplate {
     private LocalDateTime timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "template_id")
+    @JoinColumn(name = "value_id")
     @JsonBackReference
-    @Schema(description = "Шаблон")
-    private Template template;
+    @Schema(description = "Value")
+    private Value value;
 
     public void setJsonValue(Object jsonTemplate) {
         this.jsonValue = ObjectMapperUtil.setValue(jsonTemplate);

@@ -4,9 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="create-table-post_create_template" author="M_Zhivotovskiy">
-        <createTable tableName="post_create_templates">
-            <column name="post_create_template_id" type="BIGSERIAL">
+    <changeSet id="create-table-update_values" author="M_Zhivotovskiy">
+        <createTable tableName="update_values">
+            <column name="update_value_id" type="BIGSERIAL">
                 <constraints primaryKey="true"/>
             </column>
             <column name="json_value" type="TEXT">
@@ -18,13 +18,14 @@
             <column name="timestamp" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+
         </createTable>
     </changeSet>
 
-    <changeSet id="add-new-column-template_id" author="M_Zhivotovskiy">
-        <addColumn tableName="post_create_templates">
-            <column name="template_id" type="BIGSERIAL">
-                <constraints foreignKeyName="FK_template_id" references="templates(template_id)"
+    <changeSet id="add-new-column-value_id" author="M_Zhivotovskiy">
+        <addColumn tableName="update_values">
+            <column name="value_id" type="BIGSERIAL">
+                <constraints foreignKeyName="FK_value_id" references="values(value_id)"
                              nullable="false"/>
             </column>
         </addColumn>
