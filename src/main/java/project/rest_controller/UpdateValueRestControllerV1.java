@@ -51,10 +51,11 @@ public class UpdateValueRestControllerV1 {
             description = "Позволяет удалить запрос для до создания шаблона(переводит в состояние поля isArchive = true)"
     )
     @DeleteMapping(value = "/{updateValueId}")
-    public void deleteByIdPostCreateTemplate(
+    public ResponseEntity<String> deleteByIdPostCreateTemplate(
             @PathVariable("updateValueId")
             @Parameter(description = "ID идентификатор запроса для до создания запроса") Long updateValueId) {
         updateValueService.deleteByIdUpdateValue(updateValueId);
+        return new ResponseEntity<>("Строка UpdateValue переведена в архив", HttpStatus.NO_CONTENT);
     }
 
     @Operation(

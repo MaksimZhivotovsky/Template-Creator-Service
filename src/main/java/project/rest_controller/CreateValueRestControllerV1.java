@@ -63,9 +63,10 @@ public class CreateValueRestControllerV1 {
             description = "Позволяет удалить запрос шаблона(переводит в состояние поля isArchive = true)"
     )
     @DeleteMapping(value = "/{createValueId}")
-    public void deleteByIdCreateValue(
+    public ResponseEntity<String> deleteByIdCreateValue(
 //            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
             @PathVariable("createValueId") @Parameter(description = "ID идентификатор запроса для создание шаблона") Long createValueId) {
         createValueService.deleteByIdCreateValue(createValueId);
+        return new ResponseEntity<>("Строка CreateValue переведена в архив", HttpStatus.NO_CONTENT);
     }
 }

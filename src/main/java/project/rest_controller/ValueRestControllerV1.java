@@ -68,8 +68,19 @@ public class ValueRestControllerV1 {
             description = "Позволяет удалить шаблон по id(переводит в состояние архивного)"
     )
     @DeleteMapping(value = "/{valueId}")
-    public void deleteByIdValue(
+    public ResponseEntity<String> deleteByIdValue(
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
         valueService.deleteByIdValue(valueId);
+        return new ResponseEntity<>("Value переведена в архив",HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(
+            summary = "Получение всех value принадлежащих к сервису",
+            description = "Позволяет получить все value принадлежащих к сервису"
+    )
+    @GetMapping(value = "/service/{serviceId}")
+    public ResponseEntity<List<ValueDto>> getAllValueDtoByServiceId(
+            @PathVariable("serviceId") @Parameter(description = "ID сервиса") Long serviceId) {
+        return new ResponseEntity<>(valueService.getAllByServerId(serviceId), HttpStatus.OK);
     }
 }

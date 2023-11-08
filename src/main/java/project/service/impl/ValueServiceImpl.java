@@ -37,7 +37,7 @@ public class ValueServiceImpl implements ValueService {
     @Transactional(readOnly = true)
     public List<ValueDto> getAllValues() {
         List<ValueDto> valueDtos = new ArrayList<>();
-        for (Value value : valueRepository.findAll()) {
+        for (project.entity.Value value : valueRepository.findAll()) {
             valueDtos.add(ValueMapper.mapToValueDto(value));
         }
 
@@ -49,7 +49,7 @@ public class ValueServiceImpl implements ValueService {
     @Transactional(readOnly = true)
 //    @Cacheable(cacheNames = {"valueCache"}, key = "#valueId")
     public Optional<ValueDto> getByIdValue(Long valueId) {
-        Optional<Value> value = valueRepository.findById(valueId);
+        Optional<project.entity.Value> value = valueRepository.findById(valueId);
         ValueDto valueDto = ValueMapper.mapToValueDto(value.orElseThrow(
                 () ->  new ValueNotFoundException("Такого шаблона нет id : " + valueId)
         ));
@@ -60,9 +60,9 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public Value createValue(ValueDto valueDto) {
+    public project.entity.Value createValue(ValueDto valueDto) {
 
-        Value value = ValueMapper.mapToValue(valueDto);
+        project.entity.Value value = ValueMapper.mapToValue(valueDto);
         if (value.getUpdateValue() != null) {
             CreateValueDto createValueDto = new CreateValueDto();
             createValueDto.setValue(value);
@@ -84,8 +84,8 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public Value updateValue(Long valueId, ValueDto valueDto) {
-        Optional<Value> value = valueRepository.findById(valueId);
+    public project.entity.Value updateValue(Long valueId, ValueDto valueDto) {
+        Optional<project.entity.Value> value = valueRepository.findById(valueId);
         ValueDto check = ValueMapper.mapToValueDto(value.orElseThrow(
                 () ->  new ValueNotFoundException("Такого шаблона нет id : " + valueId)
         ));
@@ -131,11 +131,22 @@ public class ValueServiceImpl implements ValueService {
     @Transactional
 //    @CacheEvict(cacheNames = {"valueCache"}, key = "#valueId")
     public void deleteByIdValue(Long valueId) {
-        Optional<Value> value = valueRepository.findById(valueId);
+        Optional<project.entity.Value> value = valueRepository.findById(valueId);
         value.orElseThrow(
                 () ->  new ValueNotFoundException("Такого шаблона нет id : " + valueId)
         ).setIsArchive(true);
-        valueRepository.save(value.get());
         log.info("deleteByIdTemplate value.setIsArchive(true) : {} ", value.get());
+        valueRepository.save(value.get());
+
+    }
+
+    @Override
+    public List<ValueDto> getAllByServerId(Long serverId) {
+        List<ValueDto> valueDtos = new ArrayList<>();
+        for (Value value : valueRepository.findAllByServiceId(serverId)) {
+            valueDtos.add(ValueMapper.mapToValueDto(value));
+        }
+
+        return valueDtos;
     }
 }

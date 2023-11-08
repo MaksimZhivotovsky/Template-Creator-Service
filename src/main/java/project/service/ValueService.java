@@ -17,4 +17,8 @@ public interface ValueService {
     Value updateValue(Long valueId, ValueDto valueDto);
 
     void deleteByIdValue(Long valueId);
+
+    List<ValueDto> getAllByServerId(Long serverId);
+
+
 }

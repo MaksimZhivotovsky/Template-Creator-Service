@@ -6,7 +6,6 @@ import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 @NoArgsConstructor
 @AllArgsConstructor

@@ -1,5 +1,6 @@
 package project.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,6 +12,7 @@ import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +25,9 @@ import java.util.List;
 @ToString(of = {"valueId", "createValue", "updateValue"})
 @Table(name = "values")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
 @Cache(region = "valueCache",  usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Value для создания шаблона")
-public class Value {
+public class Value implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,6 +64,16 @@ public class Value {
     @JsonManagedReference
     @Schema(description = "Хранит историю изменений JSON строк для до создания шаблона")
     private List<UpdateValue> updateValues = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "values")
+    @JsonBackReference
+    @JsonManagedReference
+    private List<Template> templates = new ArrayList<>();
 
     public void setCreateValues(CreateValue createValue) {
         createValues.add(createValue);

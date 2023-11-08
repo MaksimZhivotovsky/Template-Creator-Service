@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString(of = {"jsonValue"})
-@EqualsAndHashCode(of = "createValueId")
+@EqualsAndHashCode(of = {"createValueId"})
 @NoArgsConstructor
 @Table(name = "create_values")
 @JsonInclude(JsonInclude.Include.NON_NULL)

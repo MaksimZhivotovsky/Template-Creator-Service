@@ -10,19 +10,20 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import project.utils.ObjectMapperUtil;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @ToString(of = {"jsonValue"})
-@EqualsAndHashCode(of = "updateValueId")
+@EqualsAndHashCode(of = {"updateValueId"})
 @NoArgsConstructor
 @Table(name = "update_values")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Cache( usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Запрос для до создание шаблона")
-public class UpdateValue {
+public class UpdateValue implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

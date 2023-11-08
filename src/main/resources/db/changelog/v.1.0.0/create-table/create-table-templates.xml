@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-table-templates" author="M_Zhivotovskiy">
+        <createTable tableName="templates">
+            <column name="template_id" type="BIGSERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="template_name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="service_id" type="BIGSERIAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_archive" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+
+
+        </createTable>
+    </changeSet>
+
+<!--    <changeSet id="add-new-column-value_id" author="M_Zhivotovskiy">-->
+<!--        <addColumn tableName="update_values">-->
+<!--            <column name="value_id" type="BIGSERIAL">-->
+<!--                <constraints foreignKeyName="FK_value_id" references="values(value_id)"-->
+<!--                             nullable="false"/>-->
+<!--            </column>-->
+<!--        </addColumn>-->
+<!--    </changeSet>-->
+</databaseChangeLog>
