@@ -2,9 +2,6 @@ package project.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.dto.CreateValueDto;
@@ -50,7 +47,7 @@ public class ValueServiceImpl implements ValueService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = {"valueCache"}, key = "#valueId")
+//    @Cacheable(cacheNames = {"valueCache"}, key = "#valueId")
     public Optional<ValueDto> getByIdValue(Long valueId) {
         Optional<Value> value = valueRepository.findById(valueId);
         ValueDto valueDto = ValueMapper.mapToValueDto(value.orElseThrow(
@@ -62,7 +59,7 @@ public class ValueServiceImpl implements ValueService {
 
     @Override
     @Transactional
-    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
+//    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
     public Value createValue(ValueDto valueDto) {
 
         Value value = ValueMapper.mapToValue(valueDto);
@@ -70,7 +67,7 @@ public class ValueServiceImpl implements ValueService {
             CreateValueDto createValueDto = new CreateValueDto();
             createValueDto.setValue(value);
             createValueDto.setJsonValue(valueDto.getCreateValue());
-            value.setCreateValues(CreateValueMapper.mapToCreateTemplate(createValueDto));
+            value.setCreateValues(CreateValueMapper.mapToCreateValue(createValueDto));
         }
 
         if (value.getCreateValue() != null) {
@@ -86,7 +83,7 @@ public class ValueServiceImpl implements ValueService {
 
     @Override
     @Transactional
-    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
+//    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
     public Value updateValue(Long valueId, ValueDto valueDto) {
         Optional<Value> value = valueRepository.findById(valueId);
         ValueDto check = ValueMapper.mapToValueDto(value.orElseThrow(
@@ -107,7 +104,7 @@ public class ValueServiceImpl implements ValueService {
             CreateValueDto createValueDto = new CreateValueDto();
             createValueDto.setValue(value.get());
             createValueDto.setJsonValue(valueDto.getCreateValue());
-            createValueRepository.save(CreateValueMapper.mapToCreateTemplate(createValueDto));
+            createValueRepository.save(CreateValueMapper.mapToCreateValue(createValueDto));
         }
 
         List<String> findUpdateValue = value.get().getUpdateValues().stream()
@@ -132,7 +129,7 @@ public class ValueServiceImpl implements ValueService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = {"valueCache"}, key = "#valueId")
+//    @CacheEvict(cacheNames = {"valueCache"}, key = "#valueId")
     public void deleteByIdValue(Long valueId) {
         Optional<Value> value = valueRepository.findById(valueId);
         value.orElseThrow(

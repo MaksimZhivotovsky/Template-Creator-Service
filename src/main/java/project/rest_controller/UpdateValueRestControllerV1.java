@@ -62,7 +62,7 @@ public class UpdateValueRestControllerV1 {
             description = "Позволяет получить запрос для до создание шаблон по id"
     )
     @GetMapping(value = "/{updateValueId}")
-    public ResponseEntity<Optional<UpdateValueDto>> getByIdPostCreateTemplate(
+    public ResponseEntity<Optional<Object>> getByIdPostCreateTemplate(
 //            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
             @PathVariable("updateValueId") @Parameter(description = "ID идентификатор запроса для до создония шаблона") Long updateValueId) {
         return new ResponseEntity<>(updateValueService.getByIdUpdateValue(updateValueId), HttpStatus.OK);

@@ -21,6 +21,7 @@ public class CreateValueDto {
     @NotBlank
     private String jsonValue;
     @Schema(description = "Value к которому относится эта строка")
+//    @NotBlank
     private Value value;
 
     public void setJsonValue(Object jsonValue) {

@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface UpdateValueService {
     UpdateValue createUpdateValue(Long valueId, UpdateValueDto updateValueDto);
 
-    Optional<UpdateValueDto> getByIdUpdateValue(Long updateValueId);
+    Optional<Object> getByIdUpdateValue(Long updateValueId);
 
     void deleteByIdUpdateValue(Long updateValueId);
 

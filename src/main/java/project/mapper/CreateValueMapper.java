@@ -19,7 +19,7 @@ public class CreateValueMapper {
     }
 
     // Convert CreateValueDto into User JPA CreateValue
-    public static CreateValue mapToCreateTemplate(CreateValueDto createValueDto) {
+    public static CreateValue mapToCreateValue(CreateValueDto createValueDto) {
         CreateValue createValue = new CreateValue();
         createValue.setJsonValue(createValueDto.getJsonValue());
         createValue.setValue(createValueDto.getValue());

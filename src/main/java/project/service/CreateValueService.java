@@ -14,6 +14,6 @@ public interface CreateValueService {
 
     List<Object> getAllByValueId(Long valueId);
 
-    Optional<CreateValueDto> getByIdCreateValue(Long createValueId);
+    Optional<Object> getByIdCreateValue(Long createValueId);
 
 }

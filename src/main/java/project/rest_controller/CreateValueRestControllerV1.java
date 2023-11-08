@@ -40,7 +40,7 @@ public class CreateValueRestControllerV1 {
             description = "Позволяет получить запроса создание шаблон по id"
     )
     @GetMapping(value = "/{createValueId}")
-    public ResponseEntity<Optional<CreateValueDto>> getByIdJsonTemplate(
+    public ResponseEntity<Optional<Object>> getByIdJsonTemplate(
 //            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
             @PathVariable("createValueId") @Parameter(description = "ID идентификатор запроса шаблона") Long createValueId) {
         return new ResponseEntity<>(createValueService.getByIdCreateValue(createValueId), HttpStatus.OK);
