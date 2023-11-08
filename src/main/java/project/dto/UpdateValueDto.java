@@ -1,5 +1,6 @@
 package project.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "DTO запроса для до создание шаблона")
+@JsonIgnoreProperties(value = {"value"})
 public class UpdateValueDto {
 
     @Schema(description = "JSON строка для до создания шаблона")

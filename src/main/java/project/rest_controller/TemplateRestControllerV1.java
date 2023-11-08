@@ -34,4 +34,11 @@ public class TemplateRestControllerV1 {
     public ResponseEntity<Template> createTemplate(@RequestBody TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.createTemplate(templateDto), HttpStatus.CREATED);
     }
+
+    @PutMapping(value = "/{templateId}")
+    public ResponseEntity<Template> updateTemplate(
+            @PathVariable("templateId") Long templateId,
+            @RequestBody TemplateDto templateDto) {
+        return new ResponseEntity<>(templateService.updateTemplate(templateId, templateDto), HttpStatus.OK);
+    }
 }

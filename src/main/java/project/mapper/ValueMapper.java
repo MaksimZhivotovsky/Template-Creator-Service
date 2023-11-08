@@ -13,8 +13,8 @@ public class ValueMapper {
     public static ValueDto mapToValueDto(project.entity.Value value) {
         ValueDto valueDto = new ValueDto();
         valueDto.setServiceId(value.getServiceId());
-        valueDto.setCreateValue(value.getUpdateValue());
-        valueDto.setUpdateValue(value.getCreateValue());
+        valueDto.setCreateValue(value.getCreateValue());
+        valueDto.setUpdateValue(value.getUpdateValue());
 
         return valueDto;
     }
@@ -23,8 +23,8 @@ public class ValueMapper {
     public static project.entity.Value mapToValue(ValueDto valueDto) {
         project.entity.Value value = new project.entity.Value();
         value.setServiceId(valueDto.getServiceId());
-        value.setUpdateValue(valueDto.getCreateValue());
-        value.setCreateValue(valueDto.getUpdateValue());
+        value.setUpdateValue(valueDto.getUpdateValue());
+        value.setCreateValue(valueDto.getCreateValue());
         value.setIsArchive(false);
         value.setTimestamp(LocalDateTime.now());
         return value;

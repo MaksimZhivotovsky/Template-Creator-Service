@@ -1,5 +1,6 @@
 package project.service.impl;
 
+import liquibase.pro.packaged.O;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import project.dto.CreateValueDto;
 import project.dto.UpdateValueDto;
 import project.dto.ValueDto;
 import project.entity.CreateValue;
+import project.entity.UpdateValue;
 import project.entity.Value;
 import project.exceptions.ValueNotFoundException;
 import project.mapper.CreateValueMapper;
@@ -18,6 +20,7 @@ import project.repository.UpdateValueRepository;
 import project.repository.ValueRepository;
 import project.service.ValueService;
 import project.utils.ObjectMapperUtil;
+import project.utils.ParseJson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,15 +90,15 @@ public class ValueServiceImpl implements ValueService {
     public project.entity.Value updateValue(Long valueId, ValueDto valueDto) {
         Optional<project.entity.Value> value = valueRepository.findById(valueId);
         ValueDto check = ValueMapper.mapToValueDto(value.orElseThrow(
-                () ->  new ValueNotFoundException("Такого шаблона нет id : " + valueId)
+                () ->  new ValueNotFoundException("Такого Value нет id : " + valueId)
         ));
 
         if (check.equals(valueDto) ) {
-            throw new ValueNotFoundException("Такой шаблон уже существует : " + valueDto);
+            throw new ValueNotFoundException("Такой Value уже существует : " + valueDto);
         }
 
         List<String> findCreateValues = value.get().getCreateValues().stream()
-                .map(CreateValue::getJsonValue)
+                .map(project.entity.CreateValue::getJsonValue)
                 .collect(Collectors.toList());
         log.debug("Получил все CreateValue::getJsonValue в виде строки : {} ", Collectors.toList());
 
@@ -123,7 +126,7 @@ public class ValueServiceImpl implements ValueService {
         value.get().setCreateValue(valueDto.getUpdateValue());
         value.get().setUpdateValue(valueDto.getCreateValue());
 
-        log.info("updateTemplate template : {} ", value.get());
+        log.info("updateValue value : {} ", value.get());
         return value.get();
     }
 
@@ -147,6 +150,32 @@ public class ValueServiceImpl implements ValueService {
             valueDtos.add(ValueMapper.mapToValueDto(value));
         }
 
+        log.info("getAllByServerId valueDtos : {} ", valueDtos);
         return valueDtos;
+    }
+
+    @Override
+    public List<Object> getAllUpdateValueDtoByValue(Long valueId) {
+        Optional<Value> value = valueRepository.findById(valueId);
+
+        List<Object> updateValueObject = new ArrayList<>();
+
+        for (UpdateValue updateValue : value.get().getUpdateValues()) {
+            updateValueObject.add(ParseJson.parse(updateValue.getJsonValue()));
+        }
+
+        return updateValueObject;
+    }
+
+    @Override
+    public List<Object> getAllCreateValueDtoByValue(Long valueId) {
+        Optional<Value> value = valueRepository.findById(valueId);
+
+        List<Object> createValueObject = value.get().getCreateValues().stream()
+                .map(CreateValue::getJsonValue)
+                .map(s -> ParseJson.parse(s))
+                .collect(Collectors.toList());
+
+        return createValueObject;
     }
 }

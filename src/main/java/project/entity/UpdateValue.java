@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Cache( usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Запрос для до создание шаблона")
-public class UpdateValue implements Serializable {
+public class UpdateValue  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

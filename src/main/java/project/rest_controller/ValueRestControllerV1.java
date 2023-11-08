@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.dto.UpdateValueDto;
 import project.dto.ValueDto;
 import project.entity.Value;
 import project.service.ValueService;
@@ -82,5 +83,16 @@ public class ValueRestControllerV1 {
     public ResponseEntity<List<ValueDto>> getAllValueDtoByServiceId(
             @PathVariable("serviceId") @Parameter(description = "ID сервиса") Long serviceId) {
         return new ResponseEntity<>(valueService.getAllByServerId(serviceId), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{valueId}/objects_update_values")
+    public ResponseEntity<List<Object>> getAllUpdateValueByValue(
+            @PathVariable("valueId") Long valueId) {
+        return new ResponseEntity<>(valueService.getAllUpdateValueDtoByValue(valueId), HttpStatus.OK);
+    }
+    @GetMapping(value = "/{valueId}/objects_create_values")
+    public ResponseEntity<List<Object>> getAllCreateValueByValue(
+            @PathVariable("valueId") Long valueId) {
+        return new ResponseEntity<>(valueService.getAllCreateValueDtoByValue(valueId), HttpStatus.OK);
     }
 }

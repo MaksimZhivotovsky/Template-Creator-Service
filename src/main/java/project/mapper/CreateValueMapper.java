@@ -20,7 +20,7 @@ public class CreateValueMapper {
 
     // Convert CreateValueDto into User JPA CreateValue
     public static CreateValue mapToCreateValue(CreateValueDto createValueDto) {
-        CreateValue createValue = new CreateValue();
+        CreateValue createValue = new project.entity.CreateValue();
         createValue.setJsonValue(createValueDto.getJsonValue());
         createValue.setValue(createValueDto.getValue());
         createValue.setTimestamp(LocalDateTime.now());

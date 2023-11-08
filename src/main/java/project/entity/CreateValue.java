@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 
 @Cache(region = "createValueCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Запрос для создание шаблона")
-public class CreateValue implements Serializable{
+public class CreateValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

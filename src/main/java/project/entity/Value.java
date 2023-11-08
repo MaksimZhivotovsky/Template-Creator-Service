@@ -27,7 +27,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Cache(region = "valueCache",  usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Value для создания шаблона")
-public class Value implements Serializable {
+public class Value  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

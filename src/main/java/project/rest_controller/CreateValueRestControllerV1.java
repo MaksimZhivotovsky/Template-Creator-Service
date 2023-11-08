@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/values/{valueId}/create_values")
+@RequestMapping(value = "/api/v1/values")
 @Tag(name = "CreateValueRestControllerV1",
         description = "Работа с запросом value")
 public class CreateValueRestControllerV1 {
@@ -29,7 +29,7 @@ public class CreateValueRestControllerV1 {
             summary = "Получение истории всех изменений запроса шаблона",
             description = "Позволяет получить всю историю изменений конкретного шаблона"
     )
-    @GetMapping
+    @GetMapping(value = "/{valueId}/create_values")
     public ResponseEntity<List<Object>> getAllCreateValueByValue(
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
         return new ResponseEntity<>(createValueService.getAllByValueId(valueId), HttpStatus.OK);
@@ -39,10 +39,9 @@ public class CreateValueRestControllerV1 {
             summary = "Получение запроса создание шаблона по id",
             description = "Позволяет получить запроса создание шаблон по id"
     )
-    @GetMapping(value = "/{createValueId}")
+    @GetMapping(value = "/create_values/{createValueId}")
     public ResponseEntity<Optional<Object>> getByIdJsonTemplate(
-//            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
-            @PathVariable("createValueId") @Parameter(description = "ID идентификатор запроса шаблона") Long createValueId) {
+            @PathVariable("createValueId") @Parameter(description = "ID идентификатор запроса value") Long createValueId) {
         return new ResponseEntity<>(createValueService.getByIdCreateValue(createValueId), HttpStatus.OK);
     }
 
@@ -50,10 +49,10 @@ public class CreateValueRestControllerV1 {
             summary = "Создание запроса шаблона",
             description = "Позволяет создать запрос для шаблона"
     )
-    @PostMapping
+    @PostMapping(value = "/{valueId}/create_values")
     public ResponseEntity<CreateValue> createCreateValue(
-            @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId,
-             @RequestBody @Parameter(description = "DTO запроса JSON для создания шаблона")@Valid CreateValueDto createValueDto) {
+            @PathVariable("valueId") @Parameter(description = "ID идентификатор value") Long valueId,
+             @RequestBody @Parameter(description = "DTO запроса JSON для создания value")@Valid CreateValueDto createValueDto) {
         return new ResponseEntity<>(createValueService.createCreateValue(valueId, createValueDto), HttpStatus.CREATED);
     }
 
@@ -62,9 +61,8 @@ public class CreateValueRestControllerV1 {
             summary = "Удаление запроса шаблона",
             description = "Позволяет удалить запрос шаблона(переводит в состояние поля isArchive = true)"
     )
-    @DeleteMapping(value = "/{createValueId}")
+    @DeleteMapping(value = "/create_values/{createValueId}")
     public ResponseEntity<String> deleteByIdCreateValue(
-//            @PathVariable("templateId") @Parameter(description = "ID идентификатор шаблона") Long templateId,
             @PathVariable("createValueId") @Parameter(description = "ID идентификатор запроса для создание шаблона") Long createValueId) {
         createValueService.deleteByIdCreateValue(createValueId);
         return new ResponseEntity<>("Строка CreateValue переведена в архив", HttpStatus.NO_CONTENT);

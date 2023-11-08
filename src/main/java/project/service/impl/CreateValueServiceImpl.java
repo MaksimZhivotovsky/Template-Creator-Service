@@ -1,6 +1,5 @@
 package project.service.impl;
 
-import liquibase.pro.packaged.S;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +38,10 @@ public class CreateValueServiceImpl implements CreateValueService {
                 () ->  new ValueNotFoundException("Такого value нет id : " + valueId)
         ));
         CreateValue createValue = CreateValueMapper.mapToCreateValue(createValueDto);
+        createValue.setValue(value.get());
 
         List<String> createValueList = value.get().getCreateValues().stream()
-                        .map(CreateValue::getJsonValue)
+                        .map(project.entity.CreateValue::getJsonValue)
                         .collect(Collectors.toList());
 
         if (createValueList.contains(createValue.getJsonValue())) {
@@ -56,7 +56,7 @@ public class CreateValueServiceImpl implements CreateValueService {
     @Transactional
 //    @CacheEvict(cacheNames = {"createValueCache"}, key = "#createValueId")
     public void deleteByIdCreateValue(Long createValueId) {
-        Optional<CreateValue> createValue = createValueRepository.findById(createValueId);
+        Optional<project.entity.CreateValue> createValue = createValueRepository.findById(createValueId);
         if (createValue.isEmpty()) {
             throw new CreateValueNotFoundException("Такого запроса для шаблона нет id : " + createValueId);
         }
@@ -68,7 +68,7 @@ public class CreateValueServiceImpl implements CreateValueService {
     @Transactional(readOnly = true)
 //    @Cacheable(cacheNames = {"createValueCache"}, key = "#createValueId")
     public Optional<Object> getByIdCreateValue(Long createValueId) {
-        Optional<CreateValue> createValue = createValueRepository.findById(createValueId);
+        Optional<project.entity.CreateValue> createValue = createValueRepository.findById(createValueId);
         Object createValueJSON = ParseJson.parse(createValue.orElseThrow(
                 () -> new CreateValueNotFoundException("Такого запроса для шаблона нет id : " + createValueId)
         ).getJsonValue());
@@ -81,7 +81,7 @@ public class CreateValueServiceImpl implements CreateValueService {
 //    @Cacheable(cacheNames = {"createValueCache"}, key = "#valueId")
     public List<Object> getAllByValueId(Long valueId) {
         List<Object> createValues = new ArrayList<>();
-        for (CreateValue createValue : createValueRepository.findAllByValueValueId(valueId)) {
+        for (project.entity.CreateValue createValue : createValueRepository.findAllByValueValueId(valueId)) {
             createValues.add(ParseJson.parse(createValue.getJsonValue()));
         }
         log.info("getAllByTemplateId createValues : {} ", createValues);
