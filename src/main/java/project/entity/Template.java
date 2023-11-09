@@ -54,7 +54,7 @@ public class Template implements Serializable {
             joinColumns = {@JoinColumn(name = "template_id")},
             inverseJoinColumns = {@JoinColumn(name = "value_id")})
     @JsonManagedReference
-    @JsonBackReference
+//    @JsonBackReference
     private List<Value> values = new ArrayList<>();
 
 }

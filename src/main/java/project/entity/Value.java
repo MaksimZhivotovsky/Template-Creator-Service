@@ -75,7 +75,7 @@ public class Value implements Serializable {
             },
             mappedBy = "values")
     @JsonBackReference
-    @JsonManagedReference
+//    @JsonManagedReference
     private List<Template> templates = new ArrayList<>();
 
     public void setCreateValues(CreateValue createValue) {
