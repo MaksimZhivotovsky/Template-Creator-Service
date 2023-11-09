@@ -1,6 +1,5 @@
 package project.service.impl;
 
-import liquibase.pro.packaged.O;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import project.service.ValueService;
 import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,22 +37,21 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional(readOnly = true)
     public List<ValueDto> getAllValues() {
-        List<ValueDto> valueDtos = new ArrayList<>();
-        for (project.entity.Value value : valueRepository.findAll()) {
-            valueDtos.add(ValueMapper.mapToValueDto(value));
-        }
+        List<Value> values = valueRepository.findAll();
+        log.info("getAllTemplates value : {} ", values);
 
-        log.info("getAllTemplates valueDtos : {} ", valueDtos);
-        return valueDtos;
+        return values.stream()
+                .map(ValueMapper::mapToValueDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
 //    @Cacheable(cacheNames = {"valueCache"}, key = "#valueId")
     public Optional<ValueDto> getByIdValue(Long valueId) {
-        Optional<project.entity.Value> value = valueRepository.findById(valueId);
+        Optional<Value> value = valueRepository.findById(valueId);
         ValueDto valueDto = ValueMapper.mapToValueDto(value.orElseThrow(
-                () ->  new ValueNotFoundException("Такого шаблона нет id : " + valueId)
+                () -> new ValueNotFoundException("Такого шаблона нет id : " + valueId)
         ));
         log.info("getByIdTemplate valueDto : {} ", valueDto);
         return Optional.of(valueDto);
@@ -63,23 +60,8 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public project.entity.Value createValue(ValueDto valueDto) {
-
-        project.entity.Value value = ValueMapper.mapToValue(valueDto);
-        if (value.getUpdateValue() != null) {
-            CreateValueDto createValueDto = new CreateValueDto();
-            createValueDto.setValue(value);
-            createValueDto.setJsonValue(valueDto.getCreateValue());
-            value.setCreateValues(CreateValueMapper.mapToCreateValue(createValueDto));
-        }
-
-        if (value.getCreateValue() != null) {
-            UpdateValueDto updateValueDto = new UpdateValueDto();
-            updateValueDto.setValue(value);
-            updateValueDto.setJsonValue(valueDto.getUpdateValue());
-            value.setUpdateValues(UpdateValueMapper.mapToUpdateValue(updateValueDto));
-        }
-
+    public Value createValue(ValueDto valueDto) {
+        Value value = ValueMapper.mapToValue(valueDto);
         log.info("createTemplate value : {} ", value);
         return valueRepository.save(value);
     }
@@ -87,20 +69,20 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public project.entity.Value updateValue(Long valueId, ValueDto valueDto) {
-        Optional<project.entity.Value> value = valueRepository.findById(valueId);
+    public Value updateValue(Long valueId, ValueDto valueDto) {
+        Optional<Value> value = valueRepository.findById(valueId);
         ValueDto check = ValueMapper.mapToValueDto(value.orElseThrow(
-                () ->  new ValueNotFoundException("Такого Value нет id : " + valueId)
+                () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
         ));
 
-        if (check.equals(valueDto) ) {
+        if (check.equals(valueDto)) {
             throw new ValueNotFoundException("Такой Value уже существует : " + valueDto);
         }
 
         List<String> findCreateValues = value.get().getCreateValues().stream()
                 .map(project.entity.CreateValue::getJsonValue)
                 .collect(Collectors.toList());
-        log.debug("Получил все CreateValue::getJsonValue в виде строки : {} ", Collectors.toList());
+        log.debug("Получил все CreateValue::getJsonValue в виде строки : {} ", findCreateValues);
 
         if (valueDto.getCreateValue() != null
                 && !findCreateValues.contains(ObjectMapperUtil.setValue(valueDto.getCreateValue()))) {
@@ -113,7 +95,7 @@ public class ValueServiceImpl implements ValueService {
         List<String> findUpdateValue = value.get().getUpdateValues().stream()
                 .map(project.entity.UpdateValue::getJsonValue)
                 .collect(Collectors.toList());
-        log.debug("Получил все UpdateValue::getJsonValue)в виде строки : {} ", Collectors.toList());
+        log.debug("Получил все UpdateValue::getJsonValue в виде строки : {} ", findUpdateValue);
 
         if (valueDto.getUpdateValue() != null
                 && !findUpdateValue.contains(ObjectMapperUtil.setValue(valueDto.getUpdateValue()))) {
@@ -136,46 +118,74 @@ public class ValueServiceImpl implements ValueService {
     public void deleteByIdValue(Long valueId) {
         Optional<project.entity.Value> value = valueRepository.findById(valueId);
         value.orElseThrow(
-                () ->  new ValueNotFoundException("Такого шаблона нет id : " + valueId)
+                () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
         ).setIsArchive(true);
         log.info("deleteByIdTemplate value.setIsArchive(true) : {} ", value.get());
         valueRepository.save(value.get());
-
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ValueDto> getAllByServerId(Long serverId) {
-        List<ValueDto> valueDtos = new ArrayList<>();
-        for (Value value : valueRepository.findAllByServiceId(serverId)) {
-            valueDtos.add(ValueMapper.mapToValueDto(value));
-        }
+        List<Value> value = valueRepository.findAllByServiceId(serverId);
+        log.info("getAllByServerId value : {} ", value);
 
-        log.info("getAllByServerId valueDtos : {} ", valueDtos);
-        return valueDtos;
+        return value.stream()
+                .map(ValueMapper::mapToValueDto)
+                .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Object> getAllUpdateValueDtoByValue(Long valueId) {
         Optional<Value> value = valueRepository.findById(valueId);
+        log.info("getAllUpdateValueDtoByValue value : {} ", value);
 
-        List<Object> updateValueObject = new ArrayList<>();
-
-        for (UpdateValue updateValue : value.get().getUpdateValues()) {
-            updateValueObject.add(ParseJson.parse(updateValue.getJsonValue()));
-        }
-
-        return updateValueObject;
+        return value.orElseThrow(
+                        () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
+                ).getUpdateValues().stream()
+                .map(UpdateValue::getJsonValue)
+                .map(ParseJson::parse)
+                .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Object> getAllCreateValueDtoByValue(Long valueId) {
         Optional<Value> value = valueRepository.findById(valueId);
+        log.info("getAllCreateValueDtoByValue value : {} ", value);
 
-        List<Object> createValueObject = value.get().getCreateValues().stream()
+        return value.orElseThrow(
+                        () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
+                ).getCreateValues().stream()
                 .map(CreateValue::getJsonValue)
-                .map(s -> ParseJson.parse(s))
+                .map(ParseJson::parse)
                 .collect(Collectors.toList());
+    }
 
-        return createValueObject;
+    @Override
+    @Transactional(readOnly = true)
+    public List<Object> getAllCreateValueByServiceId(Long serviceId) {
+        List<Value> values = valueRepository.findAllByServiceId(serviceId);
+
+        List<Object> createValue = values.stream()
+                .map(Value::getCreateValue)
+                .collect(Collectors.toList());
+        log.info("getAllCreateValueByServiceId createValue : {} ", createValue);
+
+        return createValue;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Object> getAllUpdateValueByServiceId(Long serviceId) {
+        List<Value> values = valueRepository.findAllByServiceId(serviceId);
+
+        List<Object> updateValue = values.stream()
+                .map(Value::getUpdateValue)
+                .collect(Collectors.toList());
+        log.info("getAllCreateValueByServiceId updateValue : {} ", updateValue);
+
+        return updateValue;
     }
 }

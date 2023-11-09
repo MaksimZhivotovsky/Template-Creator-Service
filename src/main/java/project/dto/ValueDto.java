@@ -6,6 +6,7 @@ import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class ValueDto {
     @Schema(description = "JSON запроса для до создания шаблона")
     @NotBlank
     private String updateValue;
-//    @NotEmpty
+    @NotNull(message = "Нужно указать ID сервиса")
     private Long serviceId;
 
 

@@ -23,7 +23,6 @@ public class UpdateValueDto {
     @NotBlank
     private String jsonValue;
     @Schema(description = "Шаблон к которому относится эта строка для до создания шаблона")
-//    @NotBlank
     private Value value;
 
     public void setJsonValue(Object jsonValue) {

@@ -22,7 +22,11 @@ import java.util.List;
 @EqualsAndHashCode(of = {"templateId"})
 @Table(name = "templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Template {
+
+
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class Template implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "template_id")
@@ -47,8 +51,8 @@ public class Template {
                     CascadeType.MERGE
             })
     @JoinTable(name = "template_values",
-            joinColumns = { @JoinColumn(name = "template_id") },
-            inverseJoinColumns = { @JoinColumn(name = "value_id") })
+            joinColumns = {@JoinColumn(name = "template_id")},
+            inverseJoinColumns = {@JoinColumn(name = "value_id")})
     @JsonManagedReference
     @JsonBackReference
     private List<Value> values = new ArrayList<>();

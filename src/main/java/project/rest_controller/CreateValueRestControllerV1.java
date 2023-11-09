@@ -52,7 +52,7 @@ public class CreateValueRestControllerV1 {
     @PostMapping(value = "/{valueId}/create_values")
     public ResponseEntity<CreateValue> createCreateValue(
             @PathVariable("valueId") @Parameter(description = "ID идентификатор value") Long valueId,
-             @RequestBody @Parameter(description = "DTO запроса JSON для создания value")@Valid CreateValueDto createValueDto) {
+             @RequestBody @Parameter(description = "DTO запроса JSON для создания value") @Valid CreateValueDto createValueDto) {
         return new ResponseEntity<>(createValueService.createCreateValue(valueId, createValueDto), HttpStatus.CREATED);
     }
 

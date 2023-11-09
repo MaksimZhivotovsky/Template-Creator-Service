@@ -1,7 +1,5 @@
 package project.service;
 
-import project.dto.CreateValueDto;
-import project.dto.UpdateValueDto;
 import project.dto.ValueDto;
 import project.entity.Value;
 
@@ -25,5 +23,9 @@ public interface ValueService {
     List<Object> getAllCreateValueDtoByValue(Long valueId);
 
     List<Object> getAllUpdateValueDtoByValue(Long valueId);
+
+    List<Object> getAllCreateValueByServiceId(Long serviceId);
+
+    List<Object> getAllUpdateValueByServiceId(Long serviceId);
 
 }

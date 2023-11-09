@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.dto.UpdateValueDto;
 import project.dto.ValueDto;
 import project.entity.Value;
 import project.service.ValueService;
@@ -49,7 +48,7 @@ public class ValueRestControllerV1 {
     )
     @PostMapping
     public ResponseEntity<Value> createValue(
-             @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
+            @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
         return new ResponseEntity<>(valueService.createValue(valueDto), HttpStatus.CREATED);
     }
 
@@ -72,7 +71,7 @@ public class ValueRestControllerV1 {
     public ResponseEntity<String> deleteByIdValue(
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
         valueService.deleteByIdValue(valueId);
-        return new ResponseEntity<>("Value переведена в архив",HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Value переведена в архив", HttpStatus.NO_CONTENT);
     }
 
     @Operation(
@@ -85,14 +84,43 @@ public class ValueRestControllerV1 {
         return new ResponseEntity<>(valueService.getAllByServerId(serviceId), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Получение всех UpdateValue принадлежащих к Value",
+            description = "Позволяет получить все UpdateValue принадлежащих к Value"
+    )
     @GetMapping(value = "/{valueId}/objects_update_values")
     public ResponseEntity<List<Object>> getAllUpdateValueByValue(
-            @PathVariable("valueId") Long valueId) {
+            @PathVariable("valueId") @Parameter(description = "ID Value") Long valueId) {
         return new ResponseEntity<>(valueService.getAllUpdateValueDtoByValue(valueId), HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Получение всех CreateValue принадлежащих к Value",
+            description = "Позволяет получить все CreateValue принадлежащих к Value"
+    )
     @GetMapping(value = "/{valueId}/objects_create_values")
     public ResponseEntity<List<Object>> getAllCreateValueByValue(
-            @PathVariable("valueId") Long valueId) {
+            @PathVariable("valueId") @Parameter(description = "ID Value") Long valueId) {
         return new ResponseEntity<>(valueService.getAllCreateValueDtoByValue(valueId), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Получение всех CreateValue принадлежащих к Service",
+            description = "Позволяет получить все CreateValue принадлежащих к Service "
+    )
+    @GetMapping(value = "/service/{serviceId}/objects_create_values")
+    public ResponseEntity<List<Object>> getAllCreateValueByServiceId(
+            @PathVariable("serviceId") @Parameter(description = "ID сервиса") Long serviceId) {
+        return new ResponseEntity<>(valueService.getAllCreateValueByServiceId(serviceId), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Получение всех UpdateValue принадлежащих к Service",
+            description = "Позволяет получить все UpdateValue принадлежащих к Service "
+    )
+    @GetMapping(value = "/service/{serviceId}/objects_update_values")
+    public ResponseEntity<List<Object>> getAllUpdateValueByServiceId(
+            @PathVariable("serviceId") @Parameter(description = "ID сервиса") Long serviceId) {
+        return new ResponseEntity<>(valueService.getAllUpdateValueByServiceId(serviceId), HttpStatus.OK);
     }
 }

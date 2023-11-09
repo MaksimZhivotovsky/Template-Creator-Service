@@ -24,12 +24,12 @@ public class CreateValueDto {
     @NotBlank
     private String jsonValue;
     @Schema(description = "Value к которому относится эта строка")
-//    @NotBlank
     private Value value;
 
     public void setJsonValue(Object jsonValue) {
         this.jsonValue = ObjectMapperUtil.setValue(jsonValue);
     }
+
     public Object getJsonValue() {
         return ParseJson.parse(this.jsonValue);
     }

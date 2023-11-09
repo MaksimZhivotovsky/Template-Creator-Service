@@ -5,9 +5,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import project.dto.CreateValueDto;
+import project.dto.UpdateValueDto;
+import project.mapper.CreateValueMapper;
+import project.mapper.UpdateValueMapper;
 import project.utils.ObjectMapperUtil;
 import project.utils.ParseJson;
 
@@ -25,9 +26,11 @@ import java.util.List;
 @ToString(of = {"valueId", "createValue", "updateValue"})
 @Table(name = "values")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Cache(region = "valueCache",  usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Value для создания шаблона")
-public class Value  {
+
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class Value implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,10 +88,20 @@ public class Value  {
 
     public void setUpdateValue(Object updateValue) {
         this.updateValue = ObjectMapperUtil.setValue(updateValue);
+        UpdateValueDto updateValueDto = new UpdateValueDto();
+        updateValueDto.setJsonValue(updateValue);
+        updateValueDto.setValue(this);
+        UpdateValue updateValueData = UpdateValueMapper.mapToUpdateValue(updateValueDto);
+        setUpdateValues(updateValueData);
     }
 
-    public void setCreateValue(Object jsonTemplate) {
-        this.createValue = ObjectMapperUtil.setValue(jsonTemplate);
+    public void setCreateValue(Object createValue) {
+        this.createValue = ObjectMapperUtil.setValue(createValue);
+        CreateValueDto createValueDto = new CreateValueDto();
+        createValueDto.setJsonValue(createValue);
+        createValueDto.setValue(this);
+        CreateValue createValueData = CreateValueMapper.mapToCreateValue(createValueDto);
+        setCreateValues(createValueData);
     }
 
     public Object getUpdateValue() {

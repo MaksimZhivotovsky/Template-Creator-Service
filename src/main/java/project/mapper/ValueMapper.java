@@ -1,6 +1,7 @@
 package project.mapper;
 
 import project.dto.ValueDto;
+import project.entity.Value;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ public class ValueMapper {
     }
 
     // Convert Value JPA Entity into ValueDto
-    public static ValueDto mapToValueDto(project.entity.Value value) {
+    public static ValueDto mapToValueDto(Value value) {
         ValueDto valueDto = new ValueDto();
         valueDto.setServiceId(value.getServiceId());
         valueDto.setCreateValue(value.getCreateValue());
@@ -20,8 +21,8 @@ public class ValueMapper {
     }
 
     // Convert ValueDto into User JPA Value
-    public static project.entity.Value mapToValue(ValueDto valueDto) {
-        project.entity.Value value = new project.entity.Value();
+    public static Value mapToValue(ValueDto valueDto) {
+        Value value = new Value();
         value.setServiceId(valueDto.getServiceId());
         value.setUpdateValue(valueDto.getUpdateValue());
         value.setCreateValue(valueDto.getCreateValue());

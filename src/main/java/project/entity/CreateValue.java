@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import project.utils.ObjectMapperUtil;
 
 import javax.persistence.*;
@@ -21,10 +18,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "create_values")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
-@Cache(region = "createValueCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Schema(description = "Запрос для создание шаблона")
-public class CreateValue {
+
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class CreateValue implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

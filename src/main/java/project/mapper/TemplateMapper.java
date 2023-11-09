@@ -20,12 +20,12 @@ public class TemplateMapper {
         templateDto.setTemplateName(template.getTemplateName());
         templateDto.setServiceId(template.getServiceId());
 
-        List<ValueDto> valueDtos = new ArrayList<>();
+        List<ValueDto> valueDtoList = new ArrayList<>();
         for(Value value : template.getValues()) {
-            valueDtos.add(ValueMapper.mapToValueDto(value));
+            valueDtoList.add(ValueMapper.mapToValueDto(value));
         }
 
-        templateDto.setValueDtos(valueDtos);
+        templateDto.setValueDtoList(valueDtoList);
         return templateDto;
     }
 
@@ -36,7 +36,7 @@ public class TemplateMapper {
         template.setTemplateName(templateDto.getTemplateName());
 
         List<Value> values = new ArrayList<>();
-        for (ValueDto valueDto : templateDto.getValueDtos()) {
+        for (ValueDto valueDto : templateDto.getValueDtoList()) {
             values.add(ValueMapper.mapToValue(valueDto));
         }
 

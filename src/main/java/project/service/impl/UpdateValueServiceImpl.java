@@ -36,7 +36,7 @@ public class UpdateValueServiceImpl implements UpdateValueService {
 
         Optional<Value> value = valueRepository.findById(valueId);
         updateValueDto.setValue(value.orElseThrow(
-                () ->  new ValueNotFoundException("Такого шаблона нет id : " + valueId)
+                () -> new ValueNotFoundException("Такого шаблона нет id : " + valueId)
         ));
         UpdateValue updateValue = UpdateValueMapper.mapToUpdateValue(updateValueDto);
 
@@ -48,7 +48,6 @@ public class UpdateValueServiceImpl implements UpdateValueService {
         if (updateValueList.contains(updateValue.getJsonValue())) {
             throw new CreateValueNotFoundException("Такой JsonValue существует : " + updateValue.getJsonValue());
         }
-
 
 
         log.info("createUpdateValue updateValue : {} ", updateValue);

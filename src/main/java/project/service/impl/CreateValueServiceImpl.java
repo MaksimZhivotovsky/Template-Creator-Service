@@ -35,14 +35,14 @@ public class CreateValueServiceImpl implements CreateValueService {
     public CreateValue createCreateValue(Long valueId, CreateValueDto createValueDto) {
         Optional<Value> value = valueRepository.findById(valueId);
         createValueDto.setValue(value.orElseThrow(
-                () ->  new ValueNotFoundException("Такого value нет id : " + valueId)
+                () -> new ValueNotFoundException("Такого value нет id : " + valueId)
         ));
         CreateValue createValue = CreateValueMapper.mapToCreateValue(createValueDto);
         createValue.setValue(value.get());
 
         List<String> createValueList = value.get().getCreateValues().stream()
-                        .map(project.entity.CreateValue::getJsonValue)
-                        .collect(Collectors.toList());
+                .map(project.entity.CreateValue::getJsonValue)
+                .collect(Collectors.toList());
 
         if (createValueList.contains(createValue.getJsonValue())) {
             throw new CreateValueNotFoundException("Такой JsonValue существует : " + createValue.getJsonValue());
