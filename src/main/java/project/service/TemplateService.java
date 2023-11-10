@@ -1,26 +1,31 @@
 package project.service;
 
 import project.dto.TemplateDto;
-import project.dto.ValueDto;
 import project.entity.Template;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TemplateService {
 
-    List<TemplateDto> getAll();
+    List<TemplateDto> getAllTemplates();
 
-    List<TemplateDto> getAllByServiceId(Long serviceId);
+    Optional<TemplateDto> getByTemplateId(Long templateId);
 
-    Template createTemplate(TemplateDto templateDto);
+    Template createTemplate(TemplateDto valueDto);
 
-    Template updateTemplate(Long templateId, TemplateDto templateDto);
+    Template updateTemplate(Long valueId, TemplateDto valueDto);
 
-    void deleteById(Long templateId);
+    void deleteById(Long valueId);
 
-    List<ValueDto> getAllValueByTemplate(Long templateId);
+    List<TemplateDto> getAllByServerId(Long serverId);
 
-    List<Object> getAllCreateValueByTemplate(Long templateId);
+    String getCreateValue(Long templateId);
 
-    List<Object> getAllUpdateValueByTemplate(Long templateId);
+    String getUpdateValue(Long templateId);
+
+    List<String> getAllCreateValueTemplateByServiceId(Long serviceId);
+
+    List<String> getAllUpdateValueByServiceId(Long serviceId);
+
 }

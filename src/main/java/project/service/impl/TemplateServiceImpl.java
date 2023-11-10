@@ -3,17 +3,15 @@ package project.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.dto.TemplateDto;
-import project.dto.ValueDto;
 import project.entity.Template;
-import project.entity.Value;
 import project.exceptions.TemplateNotFoundException;
 import project.mapper.TemplateMapper;
-import project.mapper.ValueMapper;
 import project.repository.TemplateRepository;
 import project.service.TemplateService;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,118 +24,126 @@ public class TemplateServiceImpl implements TemplateService {
     private final TemplateRepository templateRepository;
 
     @Override
-//    @Cacheable(value="templates", key="#root.method.name")
-    public List<TemplateDto> getAll() {
-        List<Template> templates = templateRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<TemplateDto> getAllTemplates() {
+        List<Template> values = templateRepository.findAll();
+        log.info("getAllTemplates value : {} ", values);
 
-        List<TemplateDto> templateDtoList = templates.stream()
-                .map(TemplateMapper::mapToTemplateDto)
+        return values.stream()
+                .map(TemplateMapper::mapToValueDto)
                 .collect(Collectors.toList());
-        log.info("getAllByServiceId {}", templateDtoList);
-        return templateDtoList;
     }
 
     @Override
-//    @Cacheable(value="templates", key="#serviceId")
-    public List<TemplateDto> getAllByServiceId(Long serviceId) {
-        List<Template> templates = templateRepository.findAllByServiceId(serviceId);
-        List<TemplateDto> templateDtoList = templates.stream()
-                .map(TemplateMapper::mapToTemplateDto)
-                .collect(Collectors.toList());
-        log.info("getAllByServiceId {}", templateDtoList);
-        return templateDtoList;
+    @Transactional(readOnly = true)
+//    @Cacheable(cacheNames = {"valueCache"}, key = "#templateId")
+    public Optional<TemplateDto> getByTemplateId(Long templateId) {
+        Optional<Template> value = templateRepository.findById(templateId);
+        TemplateDto valueDto = TemplateMapper.mapToValueDto(value.orElseThrow(
+                () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
+        ));
+        log.info("getByIdTemplate valueDto : {} ", valueDto);
+        return Optional.of(valueDto);
     }
 
     @Override
-//    @CachePut(value="templates", key="#templateDto")
-    public Template createTemplate(TemplateDto templateDto) {
-        Template template = TemplateMapper.mapToTemplate(templateDto);
-        Optional<Template> templateName = templateRepository.findByTemplateName(templateDto.getTemplateName());
-        if (templateName.isPresent()) {
-            throw new TemplateNotFoundException("templateName уже есть :" + templateDto.getTemplateName());
-        }
-        log.info("createTemplate {}", template);
+    @Transactional
+//    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
+    public Template createTemplate(TemplateDto valueDto) {
+        Template template = TemplateMapper.mapToValue(valueDto);
+        log.info("createTemplate template : {} ", template);
         return templateRepository.save(template);
     }
 
     @Override
-//    @CachePut(value="templates", key="#templateId")
-    public Template updateTemplate(Long templateId, TemplateDto templateDto) {
-        Optional<Template> templateData = templateRepository.findById(templateId);
-        if (templateData.isEmpty()) {
-            throw new TemplateNotFoundException("Шаблона нет с таким id : " + templateId);
+    @Transactional
+//    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
+    public Template updateTemplate(Long valueId, TemplateDto templateDto) {
+        Optional<Template> template = templateRepository.findById(valueId);
+        TemplateDto check = TemplateMapper.mapToValueDto(template.orElseThrow(
+                () -> new TemplateNotFoundException("Такого Template нет id : " + valueId)
+        ));
+
+        if (check.equals(templateDto)) {
+            throw new TemplateNotFoundException("Такой Value уже существует : " + templateDto);
         }
 
-        Optional<Template> templateName = templateRepository.findByTemplateName(templateDto.getTemplateName());
-        if (templateName.isPresent()
-                && !templateName.get().getTemplateName().equals(templateData.get().getTemplateName())) {
-            throw new TemplateNotFoundException("templateName уже есть : " + templateDto.getTemplateName());
-        }
+        template.get().setModifyData(LocalDateTime.now());
+        template.get().setCreateValue(templateDto.getUpdateValue());
+        template.get().setUpdateValue(templateDto.getCreateValue());
 
-        if (templateDto.getTemplateName() != null) {
-            templateData.get().setTemplateName(templateDto.getTemplateName());
-        }
-
-        if (templateDto.getServiceId() != null) {
-            templateData.get().setServiceId(templateDto.getServiceId());
-        }
-
-        if (templateDto.getValueDtoList() != null) {
-            List<Value> values = new ArrayList<>();
-            for (ValueDto valueDto : templateDto.getValueDtoList()) {
-                values.add(ValueMapper.mapToValue(valueDto));
-            }
-            templateData.get().setValues(values);
-        }
-        log.info("updateTemplate {}", templateData);
-        return templateRepository.save(templateData.get());
+        log.info("updateTemplate template : {} ", template.get());
+        return template.get();
     }
 
     @Override
-//    @CacheEvict(cacheNames = {"templates"}, key = "#templateId")
+    @Transactional
+//    @CacheEvict(cacheNames = {"valueCache"}, key = "#templateId")
     public void deleteById(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
         template.orElseThrow(
-                () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
+                () -> new TemplateNotFoundException("Такого Template нет id : " + templateId)
         ).setIsArchive(true);
-        log.info("deleteById {}", template);
+        log.info("deleteByIdTemplate template.setIsArchive(true) : {} ", template.get());
         templateRepository.save(template.get());
     }
 
     @Override
-    public List<ValueDto> getAllValueByTemplate(Long templateId) {
-        Optional<Template> template = templateRepository.findById(templateId);
-        List<ValueDto> valueDtoList = template.orElseThrow(
-                        () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
-                ).getValues().stream()
-                .map(ValueMapper::mapToValueDto)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public List<TemplateDto> getAllByServerId(Long serverId) {
+        List<Template> templateList = templateRepository.findAllByServiceId(serverId);
+        log.info("getAllByServerId templateList : {} ", templateList);
 
-        log.info("getAllValueByTemplate {}", valueDtoList);
-        return valueDtoList;
+        return templateList.stream()
+                .map(TemplateMapper::mapToValueDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Object> getAllCreateValueByTemplate(Long templateId) {
+    @Transactional(readOnly = true)
+    public String getUpdateValue(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
-        List<Object> createValueObject = template.orElseThrow(
-                        () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
-                ).getValues().stream()
-                .map(Value::getCreateValue)
-                .collect(Collectors.toList());
-        log.info("getAllCreateValueByTemplate {}", createValueObject);
-        return createValueObject;
+        String createValue = template.orElseThrow(
+                () -> new TemplateNotFoundException("Такого Value нет id : " + templateId)
+        ).getCreateValue();
+        log.info("getAllUpdateValueDtoByValue template : {} ", createValue);
+        return createValue;
     }
 
     @Override
-    public List<Object> getAllUpdateValueByTemplate(Long templateId) {
-        Optional<Template> template = templateRepository.findById(templateId);
-        List<Object> updateValueObject = template.orElseThrow(
-                        () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
-                ).getValues().stream()
-                .map(Value::getUpdateValue)
+    @Transactional(readOnly = true)
+    public String getCreateValue(Long templateId) {
+        Optional<Template> value = templateRepository.findById(templateId);
+        String updateValue = value.orElseThrow(
+                () -> new TemplateNotFoundException("Такого Value нет id : " + templateId)
+        ).getUpdateValue();
+        log.info("getAllCreateValueDtoByValue value : {} ", updateValue);
+        return updateValue;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getAllCreateValueTemplateByServiceId(Long serviceId) {
+        List<Template> values = templateRepository.findAllByServiceId(serviceId);
+
+        List<String> createValue = values.stream()
+                .map(Template::getCreateValue)
                 .collect(Collectors.toList());
-        log.info("getAllUpdateValueByTemplate {}", updateValueObject);
-        return updateValueObject;
+        log.info("getAllCreateValueByServiceId createValue : {} ", createValue);
+
+        return createValue;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getAllUpdateValueByServiceId(Long serviceId) {
+        List<Template> values = templateRepository.findAllByServiceId(serviceId);
+
+        List<String> updateValue = values.stream()
+                .map(Template::getUpdateValue)
+                .collect(Collectors.toList());
+        log.info("getAllCreateValueByServiceId updateValue : {} ", updateValue);
+
+        return updateValue;
     }
 }
