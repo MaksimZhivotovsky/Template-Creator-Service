@@ -51,6 +51,16 @@ public class TemplateServiceImpl implements TemplateService {
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
     public Template createTemplate(TemplateDto valueDto) {
         Template template = TemplateMapper.mapToValue(valueDto);
+        List<Template> templateList = templateRepository.findAll();
+
+        List<String> createValue = templateList.stream()
+                .map(Template::getCreateValue)
+                .collect(Collectors.toList());
+
+        if (createValue.contains(valueDto.getCreateValue())) {
+            throw new TemplateNotFoundException("template уже есть : " + valueDto.getCreateValue());
+        }
+
         log.info("createTemplate template : {} ", template);
         return templateRepository.save(template);
     }
@@ -60,19 +70,25 @@ public class TemplateServiceImpl implements TemplateService {
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
     public Template updateTemplate(Long valueId, TemplateDto templateDto) {
         Optional<Template> template = templateRepository.findById(valueId);
-        TemplateDto check = TemplateMapper.mapToValueDto(template.orElseThrow(
-                () -> new TemplateNotFoundException("Такого Template нет id : " + valueId)
-        ));
+        List<Template> templateList = templateRepository.findAll();
 
-        if (check.equals(templateDto)) {
-            throw new TemplateNotFoundException("Такой Value уже существует : " + templateDto);
+        for(Template template1 : templateList) {
+            if(templateDto.getCreateValue() != null
+                    && template1.getCreateValue().equals(templateDto.getCreateValue())) {
+                throw new TemplateNotFoundException("CreateValue");
+            }
+            if(templateDto.getUpdateValue() != null
+                    && template1.getUpdateValue().equals(templateDto.getUpdateValue())) {
+                throw new TemplateNotFoundException("UpdateValue");
+            }
         }
 
-        template.get().setModifyData(LocalDateTime.now());
         template.get().setCreateValue(templateDto.getUpdateValue());
         template.get().setUpdateValue(templateDto.getCreateValue());
 
+        template.get().setModifyData(LocalDateTime.now());
         log.info("updateTemplate template : {} ", template.get());
+
         return template.get();
     }
 
