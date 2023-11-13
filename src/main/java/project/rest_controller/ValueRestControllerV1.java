@@ -28,8 +28,8 @@ public class ValueRestControllerV1 {
             description = "Позволяет получить все value"
     )
     @GetMapping
-    public ResponseEntity<List<ValueDto>> getAllValues() {
-        return new ResponseEntity<>(valueService.getAllValues(), HttpStatus.OK);
+    public ResponseEntity<List<ValueDto>> getAllValues(@RequestParam("keycloakId") Long keycloakId) {
+        return new ResponseEntity<>(valueService.getAllValues(keycloakId), HttpStatus.OK);
     }
 
     @Operation(
@@ -38,8 +38,9 @@ public class ValueRestControllerV1 {
     )
     @GetMapping(value = "/{valueId}")
     public ResponseEntity<Optional<ValueDto>> getByIdValue(
+            @RequestParam("keycloakId") Long keycloakId,
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
-        return new ResponseEntity<>(valueService.getByIdValue(valueId), HttpStatus.OK);
+        return new ResponseEntity<>(valueService.getByIdValue(keycloakId, valueId), HttpStatus.OK);
     }
 
     @Operation(
@@ -48,19 +49,21 @@ public class ValueRestControllerV1 {
     )
     @PostMapping
     public ResponseEntity<Value> createValue(
+            @RequestParam("keycloakId") Long keycloakId,
             @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
-        return new ResponseEntity<>(valueService.createValue(valueDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(valueService.createValue(keycloakId, valueDto), HttpStatus.CREATED);
     }
 
     @Operation(
             summary = "Обновление шаблона",
             description = "Позволяет обновить шаблон по id"
     )
-    @PutMapping(value = "/{valueId}")
+    @PutMapping(value = "/{valueId}/{keycloakId}")
     public ResponseEntity<Value> updateValue(
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId,
+            @PathVariable("keycloakId") @Parameter(description = "ID идентификатор шаблона") Long keycloakId,
             @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
-        return new ResponseEntity<>(valueService.updateValue(valueId, valueDto), HttpStatus.OK);
+        return new ResponseEntity<>(valueService.updateValue(keycloakId, valueId, valueDto), HttpStatus.OK);
     }
 
     @Operation(
@@ -69,8 +72,9 @@ public class ValueRestControllerV1 {
     )
     @DeleteMapping(value = "/{valueId}")
     public ResponseEntity<String> deleteByIdValue(
+            @RequestParam("keycloakId") Long keycloakId,
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
-        valueService.deleteByIdValue(valueId);
+        valueService.deleteByIdValue(keycloakId, valueId);
         return new ResponseEntity<>("Value переведена в архив", HttpStatus.NO_CONTENT);
     }
 
@@ -85,40 +89,40 @@ public class ValueRestControllerV1 {
     }
 
     @Operation(
-            summary = "Получение всех UpdateValue принадлежащих к Value",
-            description = "Позволяет получить все UpdateValue принадлежащих к Value"
+            summary = "Получение всех JsonValue принадлежащих к организации",
+            description = "Позволяет получить все JsonValue принадлежащих к организации"
     )
-    @GetMapping(value = "/{valueId}/objects_update_values")
-    public ResponseEntity<List<Object>> getAllUpdateValueByValue(
-            @PathVariable("valueId") @Parameter(description = "ID Value") Long valueId) {
-        return new ResponseEntity<>(valueService.getAllUpdateValueDtoByValue(valueId), HttpStatus.OK);
+    @GetMapping(value = "/organization/{organizationId}/json_value")
+    public ResponseEntity<List<String>> getAllUpdateValueByValue(
+            @PathVariable("organizationId") @Parameter(description = "ID Value") Long organizationId) {
+        return new ResponseEntity<>(valueService.getAllJsonValueByOrganization(organizationId), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Получение всех CreateValue принадлежащих к Value",
-            description = "Позволяет получить все CreateValue принадлежащих к Value"
+            summary = "Получение всех UpdateValue принадлежащих к организации",
+            description = "Позволяет получить все UpdateValue принадлежащих к организации"
     )
-    @GetMapping(value = "/{valueId}/objects_create_values")
-    public ResponseEntity<List<Object>> getAllCreateValueByValue(
-            @PathVariable("valueId") @Parameter(description = "ID Value") Long valueId) {
-        return new ResponseEntity<>(valueService.getAllCreateValueDtoByValue(valueId), HttpStatus.OK);
+    @GetMapping(value = "/organization/{organizationId}/update_value")
+    public ResponseEntity<List<String>> getAllCreateValueByValue(
+            @PathVariable("organizationId") @Parameter(description = "ID Value") Long organizationId) {
+        return new ResponseEntity<>(valueService.getAllUpdateValueByOrganizationId(organizationId), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Получение всех CreateValue принадлежащих к Service",
+            summary = "Получение всех JsonValue принадлежащих к Service",
             description = "Позволяет получить все CreateValue принадлежащих к Service "
     )
-    @GetMapping(value = "/service/{serviceId}/objects_create_values")
+    @GetMapping(value = "/service/{serviceId}/json_values")
     public ResponseEntity<List<Object>> getAllCreateValueByServiceId(
             @PathVariable("serviceId") @Parameter(description = "ID сервиса") Long serviceId) {
-        return new ResponseEntity<>(valueService.getAllCreateValueByServiceId(serviceId), HttpStatus.OK);
+        return new ResponseEntity<>(valueService.getAllJsonValueByServiceId(serviceId), HttpStatus.OK);
     }
 
     @Operation(
             summary = "Получение всех UpdateValue принадлежащих к Service",
             description = "Позволяет получить все UpdateValue принадлежащих к Service "
     )
-    @GetMapping(value = "/service/{serviceId}/objects_update_values")
+    @GetMapping(value = "/service/{serviceId}/update_values")
     public ResponseEntity<List<Object>> getAllUpdateValueByServiceId(
             @PathVariable("serviceId") @Parameter(description = "ID сервиса") Long serviceId) {
         return new ResponseEntity<>(valueService.getAllUpdateValueByServiceId(serviceId), HttpStatus.OK);

@@ -7,34 +7,14 @@
     <changeSet id="create-table-template_values" author="M_Zhivotovskiy">
         <createTable tableName="template_values">
             <column name="value_id" type="BIGSERIAL">
-                <constraints foreignKeyName="FK_value_id" references="values(value_id)"
+                <constraints foreignKeyName="FK_value_id" references="values(id)"
                              nullable="false"/>
             </column>
             <column name="template_id" type="BIGSERIAL">
-                <constraints foreignKeyName="FK_template_id" references="templates(template_id)"
+                <constraints foreignKeyName="FK_template_id" references="templates(id)"
                              nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
-
-<!--    <changeSet id="add-new-column-value_id_1" author="M_Zhivotovskiy">-->
-<!--        <addColumn tableName="template_values">-->
-<!--            <column name="value_id" type="BIGSERIAL">-->
-<!--                <constraints foreignKeyName="FK_value_id" references="values(value_id)"-->
-<!--                             nullable="false"/>-->
-<!--            </column>-->
-<!--        </addColumn>-->
-<!--    </changeSet>-->
-
-<!--    <changeSet id="add-new-column-template_id" author="M_Zhivotovskiy">-->
-<!--        <addColumn tableName="template_values">-->
-<!--            <column name="template_id" type="BIGSERIAL">-->
-<!--                <constraints foreignKeyName="FK_template_id" references="templates(template_id)"-->
-<!--                             nullable="false"/>-->
-<!--            </column>-->
-<!--        </addColumn>-->
-<!--    </changeSet>-->
-
 </databaseChangeLog>
-

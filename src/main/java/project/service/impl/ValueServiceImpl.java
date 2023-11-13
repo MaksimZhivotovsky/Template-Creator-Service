@@ -4,23 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.dto.CreateValueDto;
-import project.dto.UpdateValueDto;
+import project.dto.UserRcDto;
 import project.dto.ValueDto;
-import project.entity.CreateValue;
-import project.entity.UpdateValue;
 import project.entity.Value;
 import project.exceptions.ValueNotFoundException;
-import project.mapper.CreateValueMapper;
-import project.mapper.UpdateValueMapper;
 import project.mapper.ValueMapper;
-import project.repository.CreateValueRepository;
-import project.repository.UpdateValueRepository;
+import project.repository.UserRcSQLRepository;
 import project.repository.ValueRepository;
 import project.service.ValueService;
-import project.utils.ObjectMapperUtil;
-import project.utils.ParseJson;
+import project.utils.CheckUser;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,13 +25,12 @@ import java.util.stream.Collectors;
 public class ValueServiceImpl implements ValueService {
 
     private final ValueRepository valueRepository;
-    private final CreateValueRepository createValueRepository;
-    private final UpdateValueRepository updateValueRepository;
+    private final UserRcSQLRepository userRcSQLRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public List<ValueDto> getAllValues() {
-        List<Value> values = valueRepository.findAll();
+    public List<ValueDto> getAllValues(Long keycloakId) {
+        List<Value> values = valueRepository.findAllByOrganizationId(keycloakId);
         log.info("getAllTemplates value : {} ", values);
 
         return values.stream()
@@ -48,11 +41,12 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional(readOnly = true)
 //    @Cacheable(cacheNames = {"valueCache"}, key = "#valueId")
-    public Optional<ValueDto> getByIdValue(Long valueId) {
+    public Optional<ValueDto> getByIdValue(Long keycloakId, Long valueId) {
         Optional<Value> value = valueRepository.findById(valueId);
-        ValueDto valueDto = ValueMapper.mapToValueDto(value.orElseThrow(
+        CheckUser.check(keycloakId, value.orElseThrow(
                 () -> new ValueNotFoundException("Такого шаблона нет id : " + valueId)
-        ));
+        ).getOrganizationId());
+        ValueDto valueDto = ValueMapper.mapToValueDto(value.orElseThrow());
         log.info("getByIdTemplate valueDto : {} ", valueDto);
         return Optional.of(valueDto);
     }
@@ -60,8 +54,34 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public Value createValue(ValueDto valueDto) {
+    public Value createValue(Long keycloakId, ValueDto valueDto) {
         Value value = ValueMapper.mapToValue(valueDto);
+
+        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
+        value.setOrganizationId(userRcDto.getOrganizationId());
+
+        List<Value> valueList = valueRepository.findAll();
+
+        List<String> jsonValueList = valueList.stream()
+                .map(Value::getJsonValue)
+                .collect(Collectors.toList());
+        if(!jsonValueList.contains(valueDto.getJsonValue().toString())) {
+            value.setJsonValue(valueDto.getJsonValue());
+        } else {
+            throw new ValueNotFoundException("Такой JsonValue уже существует : " + valueDto.getJsonValue());
+        }
+
+        List<String> updateValueList = valueList.stream()
+                .map(Value::getUpdateValue)
+                .collect(Collectors.toList());
+        if(!updateValueList.contains(valueDto.getUpdateValue().toString())) {
+            value.setUpdateValue(valueDto.getUpdateValue());
+        } else {
+            throw new ValueNotFoundException("Такой UpdateValue уже существует : " + valueDto.getUpdateValue());
+        }
+
+        value.setModifyData(LocalDateTime.now());
+
         log.info("createTemplate value : {} ", value);
         return valueRepository.save(value);
     }
@@ -69,45 +89,37 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public Value updateValue(Long valueId, ValueDto valueDto) {
-        Optional<Value> value = valueRepository.findById(valueId);
-        ValueDto check = ValueMapper.mapToValueDto(value.orElseThrow(
+    public Value updateValue(Long keycloakId, Long valueId, ValueDto valueDto) {
+        List<Value> valueList = valueRepository.findAll();
+
+        Optional<Value> value = valueList.stream()
+                .filter(v -> v.getId().equals(valueId))
+                .findFirst();
+
+        CheckUser.check(keycloakId, value.orElseThrow(
                 () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
-        ));
+        ).getOrganizationId());
 
-        if (check.equals(valueDto)) {
-            throw new ValueNotFoundException("Такой Value уже существует : " + valueDto);
+        List<String> jsonValueList = valueList.stream()
+                        .map(Value::getJsonValue)
+                        .collect(Collectors.toList());
+        if(!jsonValueList.contains(valueDto.getJsonValue().toString())) {
+            value.get().setJsonValue(valueDto.getJsonValue());
         }
 
-        List<String> findCreateValues = value.get().getCreateValues().stream()
-                .map(project.entity.CreateValue::getJsonValue)
+        List<String> updateValueList = valueList.stream()
+                .map(Value::getUpdateValue)
                 .collect(Collectors.toList());
-        log.debug("Получил все CreateValue::getJsonValue в виде строки : {} ", findCreateValues);
-
-        if (valueDto.getCreateValue() != null
-                && !findCreateValues.contains(ObjectMapperUtil.setValue(valueDto.getCreateValue()))) {
-            CreateValueDto createValueDto = new CreateValueDto();
-            createValueDto.setValue(value.get());
-            createValueDto.setJsonValue(valueDto.getCreateValue());
-            createValueRepository.save(CreateValueMapper.mapToCreateValue(createValueDto));
+        if(!updateValueList.contains(valueDto.getUpdateValue().toString())) {
+            value.get().setUpdateValue(valueDto.getUpdateValue());
         }
 
-        List<String> findUpdateValue = value.get().getUpdateValues().stream()
-                .map(project.entity.UpdateValue::getJsonValue)
-                .collect(Collectors.toList());
-        log.debug("Получил все UpdateValue::getJsonValue в виде строки : {} ", findUpdateValue);
-
-        if (valueDto.getUpdateValue() != null
-                && !findUpdateValue.contains(ObjectMapperUtil.setValue(valueDto.getUpdateValue()))) {
-            UpdateValueDto updateValueDto = new UpdateValueDto();
-            updateValueDto.setValue(value.get());
-            updateValueDto.setJsonValue(valueDto.getUpdateValue());
-            updateValueRepository.save(UpdateValueMapper.mapToUpdateValue(updateValueDto));
+        if(valueDto.getServiceId() != null) {
+            value.get().setServiceId(valueDto.getServiceId());
         }
 
-        value.get().setCreateValue(valueDto.getUpdateValue());
-        value.get().setUpdateValue(valueDto.getCreateValue());
-
+        value.get().setOrganizationId(value.get().getOrganizationId());
+        value.get().setModifyData(LocalDateTime.now());
         log.info("updateValue value : {} ", value.get());
         return value.get();
     }
@@ -115,11 +127,14 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CacheEvict(cacheNames = {"valueCache"}, key = "#valueId")
-    public void deleteByIdValue(Long valueId) {
-        Optional<project.entity.Value> value = valueRepository.findById(valueId);
-        value.orElseThrow(
+    public void deleteByIdValue(Long keycloakId, Long valueId) {
+        Optional<Value> value = valueRepository.findById(valueId);
+
+        CheckUser.check(keycloakId, value.orElseThrow(
                 () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
-        ).setIsArchive(true);
+        ).getOrganizationId());
+
+        value.orElseThrow().setIsArchive(true);
         log.info("deleteByIdTemplate value.setIsArchive(true) : {} ", value.get());
         valueRepository.save(value.get());
     }
@@ -136,44 +151,37 @@ public class ValueServiceImpl implements ValueService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Object> getAllUpdateValueDtoByValue(Long valueId) {
-        Optional<Value> value = valueRepository.findById(valueId);
-        log.info("getAllUpdateValueDtoByValue value : {} ", value);
+    public List<String> getAllJsonValueByOrganization(Long organizationId) {
+        List<Value> valueList = valueRepository.findAllByOrganizationId(organizationId);
 
-        return value.orElseThrow(
-                        () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
-                ).getUpdateValues().stream()
-                .map(UpdateValue::getJsonValue)
-                .map(ParseJson::parse)
+        List<String> jsonValue = valueList.stream()
+                .map(Value::getJsonValue)
                 .collect(Collectors.toList());
+        log.info("getAllJsonValueByOrganization jsonValue : {} ", jsonValue);
+        return jsonValue;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Object> getAllCreateValueDtoByValue(Long valueId) {
-        Optional<Value> value = valueRepository.findById(valueId);
-        log.info("getAllCreateValueDtoByValue value : {} ", value);
+    public List<String> getAllUpdateValueByOrganizationId(Long organizationId) {
+        List<Value> valueList = valueRepository.findAllByOrganizationId(organizationId);
 
-        return value.orElseThrow(
-                        () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
-                ).getCreateValues().stream()
-                .map(CreateValue::getJsonValue)
-                .map(ParseJson::parse)
+        List<String> updateValue = valueList.stream()
+                .map(Value::getUpdateValue)
                 .collect(Collectors.toList());
+        log.info("getAllUpdateValueByOrganizationId updateValue : {}", updateValue);
+        return updateValue;
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public List<Object> getAllCreateValueByServiceId(Long serviceId) {
+    public List<Object> getAllJsonValueByServiceId(Long serviceId) {
         List<Value> values = valueRepository.findAllByServiceId(serviceId);
 
-        List<Object> createValue = values.stream()
-                .map(Value::getCreateValue)
+        List<Object> jsonValue = values.stream()
+                .map(Value::getJsonValue)
                 .collect(Collectors.toList());
-        log.info("getAllCreateValueByServiceId createValue : {} ", createValue);
+        log.info("getAllJsonValueByServiceId jsonValue : {} ", jsonValue);
 
-        return createValue;
+        return jsonValue;
     }
 
     @Override

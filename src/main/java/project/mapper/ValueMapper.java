@@ -14,8 +14,9 @@ public class ValueMapper {
     public static ValueDto mapToValueDto(Value value) {
         ValueDto valueDto = new ValueDto();
         valueDto.setServiceId(value.getServiceId());
-        valueDto.setCreateValue(value.getCreateValue());
+        valueDto.setJsonValue(value.getJsonValue());
         valueDto.setUpdateValue(value.getUpdateValue());
+        valueDto.setOrganizationId(value.getOrganizationId());
 
         return valueDto;
     }
@@ -25,9 +26,10 @@ public class ValueMapper {
         Value value = new Value();
         value.setServiceId(valueDto.getServiceId());
         value.setUpdateValue(valueDto.getUpdateValue());
-        value.setCreateValue(valueDto.getCreateValue());
+        value.setJsonValue(valueDto.getJsonValue());
         value.setIsArchive(false);
-        value.setTimestamp(LocalDateTime.now());
+        value.setCreateData(LocalDateTime.now());
+        value.setOrganizationId(valueDto.getOrganizationId());
         return value;
     }
 }

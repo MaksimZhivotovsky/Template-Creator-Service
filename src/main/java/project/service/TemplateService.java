@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface TemplateService {
 
-    List<TemplateDto> getAll();
+    List<TemplateDto> getAllByOrganisationId(Long keycloakId, Long organizationId);
 
     List<TemplateDto> getAllByServiceId(Long serviceId);
 
-    Template createTemplate(TemplateDto templateDto);
+    Template createTemplate(Long keycloakId, TemplateDto templateDto);
 
-    Template updateTemplate(Long templateId, TemplateDto templateDto);
+    Template updateTemplate(Long keycloakId, Long templateId, TemplateDto templateDto);
 
-    void deleteById(Long templateId);
+    void deleteById(Long keycloakId, Long templateId);
 
     List<ValueDto> getAllValueByTemplate(Long templateId);
 

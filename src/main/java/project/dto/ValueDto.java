@@ -16,28 +16,22 @@ public class ValueDto {
 
     @Schema(description = "JSON создания шаблона")
     @NotBlank
-    private String createValue;
+    private String jsonValue;
     @Schema(description = "JSON запроса для до создания шаблона")
     @NotBlank
     private String updateValue;
     @NotNull(message = "Нужно указать ID сервиса")
     private Long serviceId;
+//    @NotNull(message = "Нужно указать ID организации")
+    private Long organizationId;
 
 
-    public void setCreateValue(Object createValue) {
-        this.createValue = ObjectMapperUtil.setValue(createValue);
+    public void setJsonValue(Object jsonValue) {
+        this.jsonValue = ObjectMapperUtil.setValue(jsonValue);
     }
 
     public void setUpdateValue(Object updateValue) {
         this.updateValue = ObjectMapperUtil.setValue(updateValue);
-    }
-
-    public Object getCreateValue() {
-        return ParseJson.parse(this.createValue);
-    }
-
-    public Object getUpdateValue() {
-        return ParseJson.parse(this.updateValue);
     }
 
 }

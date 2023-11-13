@@ -1,0 +1,27 @@
+package project.utils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import project.dto.UserRcDto;
+import project.entity.Value;
+import project.exceptions.UserCheckExceptions;
+import project.repository.UserRcSQLRepository;
+
+@Component
+public class CheckUser {
+
+    private static UserRcSQLRepository userRcSQLRepository;
+    private CheckUser() {}
+
+    @Autowired
+    public static void setUserRcSQLRepository(UserRcSQLRepository userRcSQLRepository) {
+        CheckUser.userRcSQLRepository = userRcSQLRepository;
+    }
+
+    public static void check(Long keycloakId, Long organizationId) { //keycloakId
+        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
+        if(!userRcDto.getOrganizationId().equals(organizationId)) {
+            throw new UserCheckExceptions("НЕТ ПРАВ");
+        }
+    }
+}

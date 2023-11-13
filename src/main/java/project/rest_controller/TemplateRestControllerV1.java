@@ -20,8 +20,10 @@ public class TemplateRestControllerV1 {
     private final TemplateService templateService;
 
     @GetMapping
-    public ResponseEntity<List<TemplateDto>> getAllTemplateDto() {
-        return new ResponseEntity<>(templateService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<TemplateDto>> getAllTemplateDto(
+            @RequestParam("keycloakId") Long keycloakId,
+            @PathVariable("organisationId") Long organizationId) {
+        return new ResponseEntity<>(templateService.getAllByOrganisationId(keycloakId, organizationId), HttpStatus.OK);
     }
 
     @GetMapping(value = "/service/{serviceId}")
@@ -31,21 +33,25 @@ public class TemplateRestControllerV1 {
     }
 
     @PostMapping
-    public ResponseEntity<Template> createTemplate(@RequestBody @Valid TemplateDto templateDto) {
-        return new ResponseEntity<>(templateService.createTemplate(templateDto), HttpStatus.CREATED);
+    public ResponseEntity<Template> createTemplate(
+            @RequestParam("keycloakId") Long keycloakId,
+            @RequestBody @Valid TemplateDto templateDto) {
+        return new ResponseEntity<>(templateService.createTemplate(keycloakId, templateDto), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
+            @RequestParam("keycloakId") Long keycloakId,
             @PathVariable("templateId") Long templateId,
             @RequestBody @Valid TemplateDto templateDto) {
-        return new ResponseEntity<>(templateService.updateTemplate(templateId, templateDto), HttpStatus.OK);
+        return new ResponseEntity<>(templateService.updateTemplate(keycloakId, templateId, templateDto), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{templateId}")
     public ResponseEntity<String> deleteById(
+            @RequestParam("keycloakId") Long keycloakId,
             @PathVariable("templateId") Long templateId) {
-        templateService.deleteById(templateId);
+        templateService.deleteById(keycloakId, templateId);
         return new ResponseEntity<>("Шаблон переведен в архив", HttpStatus.NO_CONTENT);
     }
 

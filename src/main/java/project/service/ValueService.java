@@ -8,24 +8,24 @@ import java.util.Optional;
 
 public interface ValueService {
 
-    List<ValueDto> getAllValues();
+    List<ValueDto> getAllValues(Long keycloakId);
 
-    Optional<ValueDto> getByIdValue(Long valueId);
+    Optional<ValueDto> getByIdValue(Long keycloakId,Long valueId);
 
-    Value createValue(ValueDto valueDto);
+    Value createValue(Long keycloakId, ValueDto valueDto);
 
-    Value updateValue(Long valueId, ValueDto valueDto);
+    Value updateValue(Long keycloakId, Long valueId, ValueDto valueDto);
 
-    void deleteByIdValue(Long valueId);
+    void deleteByIdValue(Long keycloakId, Long valueId);
 
-    List<ValueDto> getAllByServerId(Long serverId);
+    List<ValueDto> getAllByServerId( Long serverId);
 
-    List<Object> getAllCreateValueDtoByValue(Long valueId);
+    List<String> getAllJsonValueByOrganization(Long organizationId);
 
-    List<Object> getAllUpdateValueDtoByValue(Long valueId);
+    List<String> getAllUpdateValueByOrganizationId(Long organizationId);
 
-    List<Object> getAllCreateValueByServiceId(Long serviceId);
+    List<Object> getAllJsonValueByServiceId( Long serviceId);
 
-    List<Object> getAllUpdateValueByServiceId(Long serviceId);
+    List<Object> getAllUpdateValueByServiceId( Long serviceId);
 
 }

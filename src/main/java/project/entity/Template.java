@@ -1,6 +1,5 @@
 package project.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = {"templateId"})
+@EqualsAndHashCode(of = {"id"})
 @Table(name = "templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
@@ -29,17 +28,25 @@ import java.util.List;
 public class Template implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "template_id")
-    private Long templateId;
+    @Column(name = "id")
+    @Schema(description = "ID Template")
+    private Long id;
 
-    @Column(name = "template_name")
-    private String templateName;
+    @Column(name = "name")
+    @Schema(description = "имяTemplate")
+    private String name;
 
-    @Column(name = "timestamp")
-    private LocalDateTime timestamp;
+    @Column(name = "organization_id")
+    @Schema(description = "ID организации к которому относится Template")
+    private Long organizationId;
 
-    @Column(name = "service_id")
-    private Long serviceId;
+    @Column(name = "create_data")
+    @Schema(description = "Время создания")
+    private LocalDateTime createData;
+
+    @Column(name = "modify_data")
+    @Schema(description = "Время обновления")
+    private LocalDateTime modifyData;
 
     @Column(name = "is_archive")
     @Schema(description = "Флаг находится ли  шаблон в архиве")

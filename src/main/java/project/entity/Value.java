@@ -2,15 +2,10 @@ package project.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import project.dto.CreateValueDto;
-import project.dto.UpdateValueDto;
-import project.mapper.CreateValueMapper;
-import project.mapper.UpdateValueMapper;
 import project.utils.ObjectMapperUtil;
-import project.utils.ParseJson;
+
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,7 +18,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "valueId")
-@ToString(of = {"valueId", "createValue", "updateValue"})
+@ToString(of = {"valueId", "jsonValue", "updateValue"})
 @Table(name = "values")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Value для создания шаблона")
@@ -34,13 +29,13 @@ public class Value implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "value_id")
+    @Column(name = "id")
     @Schema(description = "Идентификатор value")
-    private Long valueId;
+    private Long id;
 
-    @Column(name = "create_value")
+    @Column(name = "json_value")
     @Schema(description = "Строка создания шаблона")
-    private String createValue;
+    private String jsonValue;
 
     @Column(name = "update_value")
     @Schema(description = "Строка для до создания шаблона")
@@ -50,23 +45,22 @@ public class Value implements Serializable {
     @Schema(description = "ID сервиса к которому относится Value")
     private Long serviceId;
 
-    @Column(name = "timestamp")
+    @Column(name = "organization_id")
+    @Schema(description = "ID организации к которому относится Value")
+    private Long organizationId;
+
+    @Column(name = "create_data")
     @Schema(description = "Время создания")
-    private LocalDateTime timestamp;
+    private LocalDateTime createData;
+
+    @Column(name = "modify_data")
+    @Schema(description = "Время обновления")
+    private LocalDateTime modifyData;
 
     @Column(name = "is_archive")
     @Schema(description = "Флаг находится ли value в архиве")
     private Boolean isArchive;
 
-    @OneToMany(mappedBy = "value", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    @Schema(description = "Хранит историю изменений JSON строк шаблона")
-    private List<CreateValue> createValues = new ArrayList<>();
-
-    @OneToMany(mappedBy = "value", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    @Schema(description = "Хранит историю изменений JSON строк для до создания шаблона")
-    private List<UpdateValue> updateValues = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
@@ -78,37 +72,13 @@ public class Value implements Serializable {
 //    @JsonManagedReference
     private List<Template> templates = new ArrayList<>();
 
-    public void setCreateValues(CreateValue createValue) {
-        createValues.add(createValue);
-    }
 
-    public void setUpdateValues(UpdateValue updateValue) {
-        updateValues.add(updateValue);
-    }
+//    public void setUpdateValue(Object updateValue) {
+//        this.updateValue = ObjectMapperUtil.setValue(updateValue);
+//    }
+//
+//    public void setJsonValue(Object jsonValue) {
+//        this.jsonValue = ObjectMapperUtil.setValue(jsonValue);
+//    }
 
-    public void setUpdateValue(Object updateValue) {
-        this.updateValue = ObjectMapperUtil.setValue(updateValue);
-        UpdateValueDto updateValueDto = new UpdateValueDto();
-        updateValueDto.setJsonValue(updateValue);
-        updateValueDto.setValue(this);
-        UpdateValue updateValueData = UpdateValueMapper.mapToUpdateValue(updateValueDto);
-        setUpdateValues(updateValueData);
-    }
-
-    public void setCreateValue(Object createValue) {
-        this.createValue = ObjectMapperUtil.setValue(createValue);
-        CreateValueDto createValueDto = new CreateValueDto();
-        createValueDto.setJsonValue(createValue);
-        createValueDto.setValue(this);
-        CreateValue createValueData = CreateValueMapper.mapToCreateValue(createValueDto);
-        setCreateValues(createValueData);
-    }
-
-    public Object getUpdateValue() {
-        return ParseJson.parse(this.updateValue);
-    }
-
-    public Object getCreateValue() {
-        return ParseJson.parse(this.createValue);
-    }
 }

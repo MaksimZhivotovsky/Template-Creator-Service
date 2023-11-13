@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import project.dto.TemplateDto;
+import project.dto.UserRcDto;
 import project.dto.ValueDto;
 import project.entity.Template;
 import project.entity.Value;
@@ -11,8 +12,11 @@ import project.exceptions.TemplateNotFoundException;
 import project.mapper.TemplateMapper;
 import project.mapper.ValueMapper;
 import project.repository.TemplateRepository;
+import project.repository.UserRcSQLRepository;
 import project.service.TemplateService;
+import project.utils.CheckUser;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +28,14 @@ import java.util.stream.Collectors;
 public class TemplateServiceImpl implements TemplateService {
 
     private final TemplateRepository templateRepository;
+    private final UserRcSQLRepository userRcSQLRepository;
 
-    @Override
-//    @Cacheable(value="templates", key="#root.method.name")
-    public List<TemplateDto> getAll() {
-        List<Template> templates = templateRepository.findAll();
+
+    //    @Cacheable(value="templates", key="#root.method.name")
+    public List<TemplateDto> getAllByOrganisationId(Long keycloakId, Long organizationId) {
+        List<Template> templates = templateRepository.findAllByOrganizationId(organizationId);
+
+        CheckUser.check(keycloakId, organizationId);
 
         List<TemplateDto> templateDtoList = templates.stream()
                 .map(TemplateMapper::mapToTemplateDto)
@@ -40,7 +47,8 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
 //    @Cacheable(value="templates", key="#serviceId")
     public List<TemplateDto> getAllByServiceId(Long serviceId) {
-        List<Template> templates = templateRepository.findAllByServiceId(serviceId);
+        List<Template> templates = templateRepository.findAllByOrganizationId(serviceId);
+//        CheckUser.check();
         List<TemplateDto> templateDtoList = templates.stream()
                 .map(TemplateMapper::mapToTemplateDto)
                 .collect(Collectors.toList());
@@ -50,36 +58,41 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
 //    @CachePut(value="templates", key="#templateDto")
-    public Template createTemplate(TemplateDto templateDto) {
+    public Template createTemplate(Long keycloakId, TemplateDto templateDto) {
         Template template = TemplateMapper.mapToTemplate(templateDto);
-        Optional<Template> templateName = templateRepository.findByTemplateName(templateDto.getTemplateName());
+        Optional<Template> templateName = templateRepository.findByName(templateDto.getName());
         if (templateName.isPresent()) {
-            throw new TemplateNotFoundException("templateName уже есть :" + templateDto.getTemplateName());
+            throw new TemplateNotFoundException("templateName уже есть :" + templateDto.getName());
         }
+        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
+        template.setModifyData(LocalDateTime.now());
+        template.setOrganizationId(userRcDto.getOrganizationId());
         log.info("createTemplate {}", template);
         return templateRepository.save(template);
     }
 
     @Override
 //    @CachePut(value="templates", key="#templateId")
-    public Template updateTemplate(Long templateId, TemplateDto templateDto) {
-        Optional<Template> templateData = templateRepository.findById(templateId);
-        if (templateData.isEmpty()) {
-            throw new TemplateNotFoundException("Шаблона нет с таким id : " + templateId);
+    public Template updateTemplate(Long keycloakId, Long templateId, TemplateDto templateDto) {
+        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
+        List<Template> templateList = templateRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
+
+        Optional<Template> template = templateList.stream()
+                        .filter(t -> t.getId().equals(templateId))
+                        .findFirst();
+        template.orElseThrow(
+                () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
+        ).setOrganizationId(userRcDto.getOrganizationId());
+
+        List<String> nameList = templateList.stream()
+                .map(Template::getName)
+                .collect(Collectors.toList());
+        if(nameList.contains(templateDto.getName())) {
+            throw new TemplateNotFoundException("templateName уже есть : " + templateDto.getName());
         }
 
-        Optional<Template> templateName = templateRepository.findByTemplateName(templateDto.getTemplateName());
-        if (templateName.isPresent()
-                && !templateName.get().getTemplateName().equals(templateData.get().getTemplateName())) {
-            throw new TemplateNotFoundException("templateName уже есть : " + templateDto.getTemplateName());
-        }
-
-        if (templateDto.getTemplateName() != null) {
-            templateData.get().setTemplateName(templateDto.getTemplateName());
-        }
-
-        if (templateDto.getServiceId() != null) {
-            templateData.get().setServiceId(templateDto.getServiceId());
+        if (templateDto.getName() != null) {
+            template.get().setName(templateDto.getName());
         }
 
         if (templateDto.getValueDtoList() != null) {
@@ -87,19 +100,21 @@ public class TemplateServiceImpl implements TemplateService {
             for (ValueDto valueDto : templateDto.getValueDtoList()) {
                 values.add(ValueMapper.mapToValue(valueDto));
             }
-            templateData.get().setValues(values);
+            template.get().setValues(values);
         }
-        log.info("updateTemplate {}", templateData);
-        return templateRepository.save(templateData.get());
+        template.get().setModifyData(LocalDateTime.now());
+        log.info("updateTemplate {}", template);
+        return templateRepository.save(template.get());
     }
 
     @Override
 //    @CacheEvict(cacheNames = {"templates"}, key = "#templateId")
-    public void deleteById(Long templateId) {
+    public void deleteById(Long keycloakId, Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
-        template.orElseThrow(
+        CheckUser.check(keycloakId, template.orElseThrow(
                 () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
-        ).setIsArchive(true);
+        ).getOrganizationId());
+        template.orElseThrow().setIsArchive(true);
         log.info("deleteById {}", template);
         templateRepository.save(template.get());
     }
@@ -123,7 +138,7 @@ public class TemplateServiceImpl implements TemplateService {
         List<Object> createValueObject = template.orElseThrow(
                         () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
                 ).getValues().stream()
-                .map(Value::getCreateValue)
+                .map(Value::getJsonValue)
                 .collect(Collectors.toList());
         log.info("getAllCreateValueByTemplate {}", createValueObject);
         return createValueObject;
@@ -140,4 +155,5 @@ public class TemplateServiceImpl implements TemplateService {
         log.info("getAllUpdateValueByTemplate {}", updateValueObject);
         return updateValueObject;
     }
+
 }

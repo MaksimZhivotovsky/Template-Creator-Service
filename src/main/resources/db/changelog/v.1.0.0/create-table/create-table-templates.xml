@@ -6,32 +6,25 @@
 
     <changeSet id="create-table-templates" author="M_Zhivotovskiy">
         <createTable tableName="templates">
-            <column name="template_id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="template_name" type="VARCHAR(255)">
+            <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="timestamp" type="TIMESTAMP">
+            <column name="create_data" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="service_id" type="BIGSERIAL">
+            <column name="modify_data" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organization_id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="is_archive" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-
-
         </createTable>
     </changeSet>
 
-<!--    <changeSet id="add-new-column-value_id" author="M_Zhivotovskiy">-->
-<!--        <addColumn tableName="update_values">-->
-<!--            <column name="value_id" type="BIGSERIAL">-->
-<!--                <constraints foreignKeyName="FK_value_id" references="values(value_id)"-->
-<!--                             nullable="false"/>-->
-<!--            </column>-->
-<!--        </addColumn>-->
-<!--    </changeSet>-->
 </databaseChangeLog>
