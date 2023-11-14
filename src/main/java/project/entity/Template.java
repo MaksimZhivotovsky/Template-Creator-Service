@@ -3,7 +3,6 @@ package project.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import project.utils.ObjectMapperUtil;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "templateId")
-@ToString(of = {"templateId", "createValue", "updateValue"})
+@ToString(of = {"templateId", "name", "jsonValue", "updateJsonValue"})
 @Table(name = "templates")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Template шаблона")
@@ -29,13 +28,17 @@ public class Template implements Serializable {
     @Schema(description = "Идентификатор value")
     private Long templateId;
 
-    @Column(name = "create_value")
-    @Schema(description = "Строка создания шаблона")
-    private String createValue;
+    @Column(name = "name")
+    @Schema(description = "Имя шаблона")
+    private String name;
 
-    @Column(name = "update_value")
+    @Column(name = "json_value")
+    @Schema(description = "Строка создания шаблона")
+    private String jsonValue;
+
+    @Column(name = "update_json_value")
     @Schema(description = "Строка для до создания шаблона")
-    private String updateValue;
+    private String updateJsonValue;
 
     @Column(name = "service_id")
     @Schema(description = "ID сервиса к которому относится Value")
@@ -61,12 +64,5 @@ public class Template implements Serializable {
         this.createData = createData;
     }
 
-//    public void setUpdateValue(Object updateValue) {
-//        this.updateValue = ObjectMapperUtil.setValue(updateValue);
-//    }
-//
-//    public void setCreateValue(Object createValue) {
-//        this.createValue = ObjectMapperUtil.setValue(createValue);
-//    }
 
 }

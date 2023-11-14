@@ -9,9 +9,4 @@
     </changeSet>
 
     <include file="create-table/create-table-templates.xml" relativeToChangelogFile="true"/>
-<!--    <include file="create-table/create-table-create_values.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="create-table/create-table-update_values.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="create-table/create-table-templates1.xml" relativeToChangelogFile="true"/>-->
-<!--    <include file="create-table/create-table-template_values.xml" relativeToChangelogFile="true"/>-->
-
 </databaseChangeLog>

@@ -54,11 +54,11 @@ public class TemplateServiceImpl implements TemplateService {
         List<Template> templateList = templateRepository.findAll();
 
         List<String> createValue = templateList.stream()
-                .map(Template::getCreateValue)
+                .map(Template::getJsonValue)
                 .collect(Collectors.toList());
 
-        if (createValue.contains(valueDto.getCreateValue())) {
-            throw new TemplateNotFoundException("template уже есть : " + valueDto.getCreateValue());
+        if (createValue.contains(valueDto.getJsonValue())) {
+            throw new TemplateNotFoundException("template уже есть : " + valueDto.getJsonValue());
         }
 
         log.info("createTemplate template : {} ", template);
@@ -73,18 +73,18 @@ public class TemplateServiceImpl implements TemplateService {
         List<Template> templateList = templateRepository.findAll();
 
         for(Template template1 : templateList) {
-            if(templateDto.getCreateValue() != null
-                    && template1.getCreateValue().equals(templateDto.getCreateValue())) {
+            if(templateDto.getJsonValue() != null
+                    && template1.getJsonValue().equals(templateDto.getJsonValue())) {
                 throw new TemplateNotFoundException("CreateValue");
             }
-            if(templateDto.getUpdateValue() != null
-                    && template1.getUpdateValue().equals(templateDto.getUpdateValue())) {
+            if(templateDto.getUpdateJsonValue() != null
+                    && template1.getUpdateJsonValue().equals(templateDto.getUpdateJsonValue())) {
                 throw new TemplateNotFoundException("UpdateValue");
             }
         }
 
-        template.get().setCreateValue(templateDto.getUpdateValue());
-        template.get().setUpdateValue(templateDto.getCreateValue());
+        template.get().setJsonValue(templateDto.getUpdateJsonValue());
+        template.get().setUpdateJsonValue(templateDto.getJsonValue());
 
         template.get().setModifyData(LocalDateTime.now());
         log.info("updateTemplate template : {} ", template.get());
@@ -121,7 +121,7 @@ public class TemplateServiceImpl implements TemplateService {
         Optional<Template> template = templateRepository.findById(templateId);
         String createValue = template.orElseThrow(
                 () -> new TemplateNotFoundException("Такого Value нет id : " + templateId)
-        ).getCreateValue();
+        ).getJsonValue();
         log.info("getAllUpdateValueDtoByValue template : {} ", createValue);
         return createValue;
     }
@@ -132,7 +132,7 @@ public class TemplateServiceImpl implements TemplateService {
         Optional<Template> value = templateRepository.findById(templateId);
         String updateValue = value.orElseThrow(
                 () -> new TemplateNotFoundException("Такого Value нет id : " + templateId)
-        ).getUpdateValue();
+        ).getUpdateJsonValue();
         log.info("getAllCreateValueDtoByValue value : {} ", updateValue);
         return updateValue;
     }
@@ -143,7 +143,7 @@ public class TemplateServiceImpl implements TemplateService {
         List<Template> values = templateRepository.findAllByServiceId(serviceId);
 
         List<String> createValue = values.stream()
-                .map(Template::getCreateValue)
+                .map(Template::getJsonValue)
                 .collect(Collectors.toList());
         log.info("getAllCreateValueByServiceId createValue : {} ", createValue);
 
@@ -156,7 +156,7 @@ public class TemplateServiceImpl implements TemplateService {
         List<Template> values = templateRepository.findAllByServiceId(serviceId);
 
         List<String> updateValue = values.stream()
-                .map(Template::getUpdateValue)
+                .map(Template::getUpdateJsonValue)
                 .collect(Collectors.toList());
         log.info("getAllCreateValueByServiceId updateValue : {} ", updateValue);
 

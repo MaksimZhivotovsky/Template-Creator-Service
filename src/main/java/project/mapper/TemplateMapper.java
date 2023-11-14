@@ -3,20 +3,19 @@ package project.mapper;
 import project.dto.TemplateDto;
 import project.entity.Template;
 
-import java.time.LocalDateTime;
-
 public class TemplateMapper {
 
     private TemplateMapper() {
     }
 
     // Convert Template JPA Entity into TemplateDto
-    public static TemplateDto mapToValueDto(Template value) {
+    public static TemplateDto mapToValueDto(Template template) {
         TemplateDto templateDto = new TemplateDto();
-        templateDto.setServiceId(value.getServiceId());
+        templateDto.setName(template.getName());
+        templateDto.setServiceId(template.getServiceId());
         templateDto.setServiceId(templateDto.getServiceId());
-        templateDto.setCreateValue(value.getCreateValue());
-        templateDto.setUpdateValue(value.getUpdateValue());
+        templateDto.setJsonValue(template.getJsonValue());
+        templateDto.setUpdateJsonValue(template.getUpdateJsonValue());
 
         return templateDto;
     }
@@ -24,13 +23,12 @@ public class TemplateMapper {
     // Convert TemplateDto into User JPA Template
     public static Template mapToValue(TemplateDto templateDto) {
         Template template = new Template();
+        template.setName(templateDto.getName());
         template.setServiceId(templateDto.getServiceId());
-        template.setUpdateValue(templateDto.getUpdateValue());
-        template.setCreateValue(templateDto.getCreateValue());
+        template.setUpdateJsonValue(templateDto.getUpdateJsonValue());
+        template.setJsonValue(templateDto.getJsonValue());
         template.setIsArchive(false);
         template.setOrganizationId(templateDto.getOrganizationId());
-//        template.setCreateData(LocalDateTime.now());
-//        template.setModifyData(LocalDateTime.now());
         return template;
     }
 }

@@ -17,24 +17,27 @@ import javax.validation.constraints.NotNull;
 @ToString(of = {"createValue", "updateValue"})
 public class TemplateDto {
 
+    @Schema(description = "Имя шаблона")
+    @NotBlank
+    private String name;
     @Schema(description = "JSON создания шаблона")
     @NotBlank
-    private String createValue;
+    private String jsonValue;
     @Schema(description = "JSON запроса для до создания шаблона")
     @NotBlank
-    private String updateValue;
+    private String updateJsonValue;
     @NotNull(message = "Нужно указать ID сервиса")
     private Long serviceId;
     @NotNull(message = "Нужно указать ID организации")
     private Long organizationId;
 
 
-    public void setCreateValue(Object createValue) {
-        this.createValue = ObjectMapperUtil.setValue(createValue);
+    public void setJsonValue(Object jsonValue) {
+        this.jsonValue = ObjectMapperUtil.setValue(jsonValue);
     }
 
-    public void setUpdateValue(Object updateValue) {
-        this.updateValue = ObjectMapperUtil.setValue(updateValue);
+    public void setUpdateJsonValue(Object updateJsonValue) {
+        this.updateJsonValue = ObjectMapperUtil.setValue(updateJsonValue);
     }
 
 }

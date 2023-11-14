@@ -9,10 +9,13 @@
             <column name="template_id" type="BIGSERIAL">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="create_value" type="TEXT">
+            <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="update_value" type="TEXT">
+            <column name="json_value" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_json_value" type="TEXT">
                 <constraints nullable="false"/>
             </column>
             <column name="is_archive" type="BOOLEAN">
