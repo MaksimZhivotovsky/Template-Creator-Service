@@ -4,16 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import project.dto.UserRcDto;
 import project.exceptions.UserCheckExceptions;
-import project.repository.UserRcSQLRepository;
+import project.repository.impl.UserRcSQLRepositoryImpl;
 
 @Component
 public class CheckUser {
 
-    private static UserRcSQLRepository userRcSQLRepository;
+    private static UserRcSQLRepositoryImpl userRcSQLRepository;
     private CheckUser() {}
 
     @Autowired
-    public void setUserRcSQLRepository(UserRcSQLRepository userRcSQLRepository) {
+    public void setUserRcSQLRepository(UserRcSQLRepositoryImpl userRcSQLRepository) {
         CheckUser.userRcSQLRepository = userRcSQLRepository;
     }
 
