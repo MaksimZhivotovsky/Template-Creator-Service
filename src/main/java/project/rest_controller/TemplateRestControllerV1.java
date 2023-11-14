@@ -19,29 +19,23 @@ public class TemplateRestControllerV1 {
 
     private final TemplateService templateService;
 
-    @GetMapping
-    public ResponseEntity<List<TemplateDto>> getAllTemplateDto(
-            @RequestParam("keycloakId") Long keycloakId,
-            @PathVariable("organisationId") Long organizationId) {
+    @GetMapping(value = "/organization/{organizationId}")
+    public ResponseEntity<List<TemplateDto>> getAllTemplateDtoByOrganizationId(
+            @RequestParam("keycloakId") String keycloakId,
+            @PathVariable("organizationId") Long organizationId) {
         return new ResponseEntity<>(templateService.getAllByOrganisationId(keycloakId, organizationId), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/service/{serviceId}")
-    public ResponseEntity<List<TemplateDto>> getAllTemplateDtoByServiceId(
-            @PathVariable("serviceId") Long serviceId) {
-        return new ResponseEntity<>(templateService.getAllByServiceId(serviceId), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Template> createTemplate(
-            @RequestParam("keycloakId") Long keycloakId,
+            @RequestParam("keycloakId") String keycloakId,
             @RequestBody @Valid TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.createTemplate(keycloakId, templateDto), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
-            @RequestParam("keycloakId") Long keycloakId,
+            @RequestParam("keycloakId") String keycloakId,
             @PathVariable("templateId") Long templateId,
             @RequestBody @Valid TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.updateTemplate(keycloakId, templateId, templateDto), HttpStatus.OK);
@@ -49,7 +43,7 @@ public class TemplateRestControllerV1 {
 
     @DeleteMapping(value = "/{templateId}")
     public ResponseEntity<String> deleteById(
-            @RequestParam("keycloakId") Long keycloakId,
+            @RequestParam("keycloakId") String keycloakId,
             @PathVariable("templateId") Long templateId) {
         templateService.deleteById(keycloakId, templateId);
         return new ResponseEntity<>("Шаблон переведен в архив", HttpStatus.NO_CONTENT);

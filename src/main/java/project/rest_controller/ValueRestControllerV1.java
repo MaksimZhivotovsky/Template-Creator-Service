@@ -28,8 +28,8 @@ public class ValueRestControllerV1 {
             description = "Позволяет получить все value"
     )
     @GetMapping
-    public ResponseEntity<List<ValueDto>> getAllValues(@RequestParam("keycloakId") Long keycloakId) {
-        return new ResponseEntity<>(valueService.getAllValues(keycloakId), HttpStatus.OK);
+    public ResponseEntity<List<ValueDto>> getAllValuesByOrganizationId(@RequestParam("keycloakId") String keycloakId) {
+        return new ResponseEntity<>(valueService.getAllValuesByOrganizationId(keycloakId), HttpStatus.OK);
     }
 
     @Operation(
@@ -38,7 +38,7 @@ public class ValueRestControllerV1 {
     )
     @GetMapping(value = "/{valueId}")
     public ResponseEntity<Optional<ValueDto>> getByIdValue(
-            @RequestParam("keycloakId") Long keycloakId,
+            @RequestParam("keycloakId") String keycloakId,
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
         return new ResponseEntity<>(valueService.getByIdValue(keycloakId, valueId), HttpStatus.OK);
     }
@@ -49,7 +49,7 @@ public class ValueRestControllerV1 {
     )
     @PostMapping
     public ResponseEntity<Value> createValue(
-            @RequestParam("keycloakId") Long keycloakId,
+            @RequestParam("keycloakId") String keycloakId,
             @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
         return new ResponseEntity<>(valueService.createValue(keycloakId, valueDto), HttpStatus.CREATED);
     }
@@ -61,7 +61,7 @@ public class ValueRestControllerV1 {
     @PutMapping(value = "/{valueId}/{keycloakId}")
     public ResponseEntity<Value> updateValue(
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId,
-            @PathVariable("keycloakId") @Parameter(description = "ID идентификатор шаблона") Long keycloakId,
+            @PathVariable("keycloakId") @Parameter(description = "ID идентификатор шаблона") String keycloakId,
             @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
         return new ResponseEntity<>(valueService.updateValue(keycloakId, valueId, valueDto), HttpStatus.OK);
     }
@@ -72,7 +72,7 @@ public class ValueRestControllerV1 {
     )
     @DeleteMapping(value = "/{valueId}")
     public ResponseEntity<String> deleteByIdValue(
-            @RequestParam("keycloakId") Long keycloakId,
+            @RequestParam("keycloakId") String keycloakId,
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
         valueService.deleteByIdValue(keycloakId, valueId);
         return new ResponseEntity<>("Value переведена в архив", HttpStatus.NO_CONTENT);

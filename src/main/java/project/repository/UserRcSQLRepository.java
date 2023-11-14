@@ -16,7 +16,7 @@ public class UserRcSQLRepository {
     @PersistenceContext
     private EntityManager em;
 
-    public UserRcDto findUserByKcId(Long id) { //  String
+    public UserRcDto findUserByKcId(String keycloakId) { //  String
 
 //        String sql = "select user_sc.id from user_sc where user_sc.keycloak_id = :keycloakId ";
 //        Query query = em.createNativeQuery(sql);
@@ -30,10 +30,10 @@ public class UserRcSQLRepository {
 //            return null;
 //        }
 
-        String sql = "select u.id, u.first_name, u.last_name, u.middle_name, u.keycloak_id, u.organization_id from user_sc u where u.id = :id ";
+        String sql = "select u.id, u.first_name, u.last_name, u.middle_name, u.keycloak_id, u.organization_id from user_sc u where u.keycloak_id = :keycloakId ";
 
         Query query = em.createNativeQuery(sql, UserRcDto.class);
-        query.setParameter("id", id);
+        query.setParameter("keycloakId", keycloakId);
 
         return (UserRcDto) query.getSingleResult();
     }

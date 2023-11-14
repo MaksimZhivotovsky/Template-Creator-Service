@@ -32,7 +32,7 @@ public class TemplateServiceImpl implements TemplateService {
 
 
     //    @Cacheable(value="templates", key="#root.method.name")
-    public List<TemplateDto> getAllByOrganisationId(Long keycloakId, Long organizationId) {
+    public List<TemplateDto> getAllByOrganisationId(String keycloakId, Long organizationId) {
         List<Template> templates = templateRepository.findAllByOrganizationId(organizationId);
 
         CheckUser.check(keycloakId, organizationId);
@@ -45,20 +45,8 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-//    @Cacheable(value="templates", key="#serviceId")
-    public List<TemplateDto> getAllByServiceId(Long serviceId) {
-        List<Template> templates = templateRepository.findAllByOrganizationId(serviceId);
-//        CheckUser.check();
-        List<TemplateDto> templateDtoList = templates.stream()
-                .map(TemplateMapper::mapToTemplateDto)
-                .collect(Collectors.toList());
-        log.info("getAllByServiceId {}", templateDtoList);
-        return templateDtoList;
-    }
-
-    @Override
 //    @CachePut(value="templates", key="#templateDto")
-    public Template createTemplate(Long keycloakId, TemplateDto templateDto) {
+    public Template createTemplate(String keycloakId, TemplateDto templateDto) {
         Template template = TemplateMapper.mapToTemplate(templateDto);
         Optional<Template> templateName = templateRepository.findByName(templateDto.getName());
         if (templateName.isPresent()) {
@@ -73,7 +61,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
 //    @CachePut(value="templates", key="#templateId")
-    public Template updateTemplate(Long keycloakId, Long templateId, TemplateDto templateDto) {
+    public Template updateTemplate(String keycloakId, Long templateId, TemplateDto templateDto) {
         UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
         List<Template> templateList = templateRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
 
@@ -109,7 +97,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
 //    @CacheEvict(cacheNames = {"templates"}, key = "#templateId")
-    public void deleteById(Long keycloakId, Long templateId) {
+    public void deleteById(String keycloakId, Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
         CheckUser.check(keycloakId, template.orElseThrow(
                 () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)

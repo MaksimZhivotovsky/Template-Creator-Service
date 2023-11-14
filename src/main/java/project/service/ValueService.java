@@ -8,15 +8,15 @@ import java.util.Optional;
 
 public interface ValueService {
 
-    List<ValueDto> getAllValues(Long keycloakId);
+    List<ValueDto> getAllValuesByOrganizationId(String keycloakId);
 
-    Optional<ValueDto> getByIdValue(Long keycloakId,Long valueId);
+    Optional<ValueDto> getByIdValue(String keycloakId,Long valueId);
 
-    Value createValue(Long keycloakId, ValueDto valueDto);
+    Value createValue(String keycloakId, ValueDto valueDto);
 
-    Value updateValue(Long keycloakId, Long valueId, ValueDto valueDto);
+    Value updateValue(String keycloakId, Long valueId, ValueDto valueDto);
 
-    void deleteByIdValue(Long keycloakId, Long valueId);
+    void deleteByIdValue(String keycloakId, Long valueId);
 
     List<ValueDto> getAllByServerId( Long serverId);
 

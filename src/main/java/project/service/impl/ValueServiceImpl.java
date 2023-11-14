@@ -29,8 +29,9 @@ public class ValueServiceImpl implements ValueService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ValueDto> getAllValues(Long keycloakId) {
-        List<Value> values = valueRepository.findAllByOrganizationId(keycloakId);
+    public List<ValueDto> getAllValuesByOrganizationId(String keycloakId) {
+        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
+        List<Value> values = valueRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
         log.info("getAllTemplates value : {} ", values);
 
         return values.stream()
@@ -41,7 +42,7 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional(readOnly = true)
 //    @Cacheable(cacheNames = {"valueCache"}, key = "#valueId")
-    public Optional<ValueDto> getByIdValue(Long keycloakId, Long valueId) {
+    public Optional<ValueDto> getByIdValue(String keycloakId, Long valueId) {
         Optional<Value> value = valueRepository.findById(valueId);
         CheckUser.check(keycloakId, value.orElseThrow(
                 () -> new ValueNotFoundException("Такого шаблона нет id : " + valueId)
@@ -54,18 +55,18 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public Value createValue(Long keycloakId, ValueDto valueDto) {
+    public Value createValue(String keycloakId, ValueDto valueDto) {
         Value value = ValueMapper.mapToValue(valueDto);
 
         UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
         value.setOrganizationId(userRcDto.getOrganizationId());
 
-        List<Value> valueList = valueRepository.findAll();
+        List<Value> valueList = valueRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
 
         List<String> jsonValueList = valueList.stream()
                 .map(Value::getJsonValue)
                 .collect(Collectors.toList());
-        if(!jsonValueList.contains(valueDto.getJsonValue().toString())) {
+        if(!jsonValueList.contains(valueDto.getJsonValue())) {
             value.setJsonValue(valueDto.getJsonValue());
         } else {
             throw new ValueNotFoundException("Такой JsonValue уже существует : " + valueDto.getJsonValue());
@@ -74,7 +75,7 @@ public class ValueServiceImpl implements ValueService {
         List<String> updateValueList = valueList.stream()
                 .map(Value::getUpdateValue)
                 .collect(Collectors.toList());
-        if(!updateValueList.contains(valueDto.getUpdateValue().toString())) {
+        if(!updateValueList.contains(valueDto.getUpdateValue())) {
             value.setUpdateValue(valueDto.getUpdateValue());
         } else {
             throw new ValueNotFoundException("Такой UpdateValue уже существует : " + valueDto.getUpdateValue());
@@ -89,28 +90,29 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
-    public Value updateValue(Long keycloakId, Long valueId, ValueDto valueDto) {
-        List<Value> valueList = valueRepository.findAll();
+    public Value updateValue(String keycloakId, Long valueId, ValueDto valueDto) {
+        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
+        List<Value> valueList = valueRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
 
         Optional<Value> value = valueList.stream()
                 .filter(v -> v.getId().equals(valueId))
                 .findFirst();
 
         CheckUser.check(keycloakId, value.orElseThrow(
-                () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
+                () -> new ValueNotFoundException("У этой организации нет такого Value id : " + valueId)
         ).getOrganizationId());
 
         List<String> jsonValueList = valueList.stream()
                         .map(Value::getJsonValue)
                         .collect(Collectors.toList());
-        if(!jsonValueList.contains(valueDto.getJsonValue().toString())) {
+        if(!jsonValueList.contains(valueDto.getJsonValue())) {
             value.get().setJsonValue(valueDto.getJsonValue());
         }
 
         List<String> updateValueList = valueList.stream()
                 .map(Value::getUpdateValue)
                 .collect(Collectors.toList());
-        if(!updateValueList.contains(valueDto.getUpdateValue().toString())) {
+        if(!updateValueList.contains(valueDto.getUpdateValue())) {
             value.get().setUpdateValue(valueDto.getUpdateValue());
         }
 
@@ -127,11 +129,11 @@ public class ValueServiceImpl implements ValueService {
     @Override
     @Transactional
 //    @CacheEvict(cacheNames = {"valueCache"}, key = "#valueId")
-    public void deleteByIdValue(Long keycloakId, Long valueId) {
+    public void deleteByIdValue(String keycloakId, Long valueId) {
         Optional<Value> value = valueRepository.findById(valueId);
 
         CheckUser.check(keycloakId, value.orElseThrow(
-                () -> new ValueNotFoundException("Такого Value нет id : " + valueId)
+                () -> new ValueNotFoundException("У этой организации нет такого Value id : " + valueId)
         ).getOrganizationId());
 
         value.orElseThrow().setIsArchive(true);
