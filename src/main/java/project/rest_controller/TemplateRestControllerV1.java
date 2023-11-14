@@ -27,14 +27,14 @@ public class TemplateRestControllerV1 {
 
     @PostMapping
     public ResponseEntity<Template> createTemplate(
-            @RequestParam("keycloakId") String keycloakId,
+            @RequestHeader("keycloakId") String keycloakId,
             @RequestBody @Valid TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.createTemplate(keycloakId, templateDto), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{templateId}")
     public ResponseEntity<Template> updateTemplate(
-            @RequestParam("keycloakId") String keycloakId,
+            @RequestHeader("keycloakId") String keycloakId,
             @PathVariable("templateId") Long templateId,
             @RequestBody @Valid TemplateDto templateDto) {
         return new ResponseEntity<>(templateService.updateTemplate(keycloakId, templateId, templateDto), HttpStatus.OK);
@@ -42,7 +42,7 @@ public class TemplateRestControllerV1 {
 
     @DeleteMapping(value = "/{templateId}")
     public ResponseEntity<String> deleteById(
-            @RequestParam("keycloakId") String keycloakId,
+            @RequestHeader("keycloakId") String keycloakId,
             @PathVariable("templateId") Long templateId) {
         templateService.deleteById(keycloakId, templateId);
         return new ResponseEntity<>("Шаблон переведен в архив", HttpStatus.NO_CONTENT);

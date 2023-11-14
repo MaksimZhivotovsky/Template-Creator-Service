@@ -40,7 +40,7 @@ public class ValueRestControllerV1 {
     )
     @PostMapping
     public ResponseEntity<Value> createValue(
-            @RequestParam("keycloakId") String keycloakId,
+            @RequestHeader("keycloakId") String keycloakId,
             @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
         return new ResponseEntity<>(valueService.createValue(keycloakId, valueDto), HttpStatus.CREATED);
     }
@@ -49,10 +49,10 @@ public class ValueRestControllerV1 {
             summary = "Обновление шаблона",
             description = "Позволяет обновить шаблон по id"
     )
-    @PutMapping(value = "/{valueId}/{keycloakId}")
+    @PutMapping(value = "/{valueId}")
     public ResponseEntity<Value> updateValue(
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId,
-            @PathVariable("keycloakId") @Parameter(description = "ID идентификатор шаблона") String keycloakId,
+            @RequestHeader("keycloakId") @Parameter(description = "ID идентификатор шаблона") String keycloakId,
             @RequestBody @Parameter(description = "DTO Шаблона") @Valid ValueDto valueDto) {
         return new ResponseEntity<>(valueService.updateValue(keycloakId, valueId, valueDto), HttpStatus.OK);
     }
@@ -61,9 +61,9 @@ public class ValueRestControllerV1 {
             summary = "Удаление шаблона",
             description = "Позволяет удалить шаблон по id(переводит в состояние архивного)"
     )
-    @DeleteMapping(value = "/{keycloakId}/{valueId}")
+    @DeleteMapping(value = "/{valueId}")
     public ResponseEntity<String> deleteByIdValue(
-            @PathVariable("keycloakId") String keycloakId,
+            @RequestHeader("keycloakId") String keycloakId,
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
         valueService.deleteByIdValue(keycloakId, valueId);
         return new ResponseEntity<>("Value переведена в архив", HttpStatus.NO_CONTENT);
