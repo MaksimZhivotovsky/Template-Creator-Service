@@ -22,7 +22,7 @@ public class ValueDto {
     private String updateValue;
     @NotNull(message = "Нужно указать ID сервиса")
     private Long serviceId;
-//    @NotNull(message = "Нужно указать ID организации")
+    @NotNull(message = "Нужно указать ID организации")
     private Long organizationId;
 
 
@@ -33,5 +33,13 @@ public class ValueDto {
     public void setUpdateValue(Object updateValue) {
         this.updateValue = ObjectMapperUtil.setValue(updateValue);
     }
+
+//    public void setJsonValue(String jsonValue) {
+//        this.jsonValue = jsonValue;
+//    }
+//
+//    public void setUpdateValue(String updateValue) {
+//        this.updateValue = updateValue;
+//    }
 
 }

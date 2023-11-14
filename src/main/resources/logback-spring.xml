@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="profiles" source="spring.profiles.active"/>
+    <property resource="application-${profiles}.properties" />
+    <property name="bootstraps.servers" value="${spring.kafka.properties.bootstrap.servers}"/>
+    <property name="activity.topic" value="${activity.topic}"/>
+
+    <define name="vmId" class="project.utils.VmIdPropertyDefiner" scope="system"/>
+
+<!--    <appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">-->
+
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
+<!--            <customFields>{-->
+<!--                "service_name":"Template-Creator-Service",-->
+<!--                "process_spring_id": "${vmId}"-->
+<!--                }</customFields>-->
+<!--        </encoder>-->
+<!--        <topic>${activity.topic}</topic>-->
+<!--        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />-->
+<!--        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />-->
+
+<!--        <producerConfig>bootstrap.servers=${bootstraps.servers}</producerConfig>-->
+<!--    </appender>-->
+
+<!--    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        <appender-ref ref="kafkaAppender" />-->
+<!--    </appender>-->
+
+
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{35} - [%mdc] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logback.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+<!--    <springProfile name="dev">-->
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--            <appender-ref ref="ASYNC" />-->
+<!--        </root>-->
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+<!--    </springProfile>-->
+
+<!--    <springProfile name="devk8s">-->
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--            <appender-ref ref="ASYNC" />-->
+<!--        </root>-->
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+<!--    </springProfile>-->
+
+<!--    <springProfile name="labMaster">-->
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--            <appender-ref ref="ASYNC" />-->
+<!--        </root>-->
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+<!--    </springProfile>-->
+
+<!--    <springProfile name="labRC">-->
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--            <appender-ref ref="ASYNC" />-->
+<!--        </root>-->
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+<!--    </springProfile>-->
+
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="consoleAppender"/>
+<!--            <appender-ref ref="file"/>-->
+<!--            <appender-ref ref="ASYNC" />-->
+        </root>
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+    </springProfile>
+
+<!--    <springProfile name="Minzdrav">-->
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--             <appender-ref ref="ASYNC" />-->
+<!--        </root>-->
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+<!--    </springProfile>-->
+
+<!--    <springProfile name="prodMaster">-->
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--             <appender-ref ref="ASYNC" />-->
+<!--        </root>-->
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+<!--    </springProfile>-->
+
+<!--    <springProfile name="prodRC">-->
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--             <appender-ref ref="ASYNC" />-->
+<!--        </root>-->
+<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
+<!--            <appender-ref ref="consoleAppender"/>-->
+<!--            <appender-ref ref="file"/>-->
+<!--        </logger>-->
+<!--    </springProfile>-->
+
+</configuration>

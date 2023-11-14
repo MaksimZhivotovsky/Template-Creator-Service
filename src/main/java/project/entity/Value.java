@@ -72,13 +72,4 @@ public class Value implements Serializable {
 //    @JsonManagedReference
     private List<Template> templates = new ArrayList<>();
 
-
-//    public void setUpdateValue(Object updateValue) {
-//        this.updateValue = ObjectMapperUtil.setValue(updateValue);
-//    }
-//
-//    public void setJsonValue(Object jsonValue) {
-//        this.jsonValue = ObjectMapperUtil.setValue(jsonValue);
-//    }
-
 }

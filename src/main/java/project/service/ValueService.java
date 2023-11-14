@@ -8,9 +8,7 @@ import java.util.Optional;
 
 public interface ValueService {
 
-    List<ValueDto> getAllValuesByOrganizationId(String keycloakId);
-
-    Optional<ValueDto> getByIdValue(String keycloakId,Long valueId);
+    List<Value> getAllValuesByOrganizationId(Long organizationId);
 
     Value createValue(String keycloakId, ValueDto valueDto);
 

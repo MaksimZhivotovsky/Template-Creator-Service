@@ -29,27 +29,11 @@ public class ValueServiceImpl implements ValueService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ValueDto> getAllValuesByOrganizationId(String keycloakId) {
-        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
-        List<Value> values = valueRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
+    public List<Value> getAllValuesByOrganizationId(Long organizationId) {
+        List<Value> values = valueRepository.findAllByOrganizationId(organizationId);
         log.info("getAllTemplates value : {} ", values);
 
-        return values.stream()
-                .map(ValueMapper::mapToValueDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-//    @Cacheable(cacheNames = {"valueCache"}, key = "#valueId")
-    public Optional<ValueDto> getByIdValue(String keycloakId, Long valueId) {
-        Optional<Value> value = valueRepository.findById(valueId);
-        CheckUser.check(keycloakId, value.orElseThrow(
-                () -> new ValueNotFoundException("Такого шаблона нет id : " + valueId)
-        ).getOrganizationId());
-        ValueDto valueDto = ValueMapper.mapToValueDto(value.orElseThrow());
-        log.info("getByIdTemplate valueDto : {} ", valueDto);
-        return Optional.of(valueDto);
+        return values;
     }
 
     @Override
@@ -58,10 +42,7 @@ public class ValueServiceImpl implements ValueService {
     public Value createValue(String keycloakId, ValueDto valueDto) {
         Value value = ValueMapper.mapToValue(valueDto);
 
-        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
-        value.setOrganizationId(userRcDto.getOrganizationId());
-
-        List<Value> valueList = valueRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
+        List<Value> valueList = valueRepository.findAllByOrganizationId(value.getOrganizationId());
 
         List<String> jsonValueList = valueList.stream()
                 .map(Value::getJsonValue)
@@ -91,8 +72,7 @@ public class ValueServiceImpl implements ValueService {
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
     public Value updateValue(String keycloakId, Long valueId, ValueDto valueDto) {
-        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
-        List<Value> valueList = valueRepository.findAllByOrganizationId(userRcDto.getOrganizationId());
+        List<Value> valueList = valueRepository.findAllByOrganizationId(valueDto.getOrganizationId());
 
         Optional<Value> value = valueList.stream()
                 .filter(v -> v.getId().equals(valueId))

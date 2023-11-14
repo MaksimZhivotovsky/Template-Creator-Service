@@ -25,7 +25,7 @@ public class TemplateMapper {
             valueDtoList.add(ValueMapper.mapToValueDto(value));
         }
 
-        templateDto.setValueDtoList(valueDtoList);
+        templateDto.setValues(valueDtoList);
         return templateDto;
     }
 
@@ -36,7 +36,7 @@ public class TemplateMapper {
         template.setName(templateDto.getName());
 
         List<Value> values = new ArrayList<>();
-        for (ValueDto valueDto : templateDto.getValueDtoList()) {
+        for (ValueDto valueDto : templateDto.getValues()) {
             values.add(ValueMapper.mapToValue(valueDto));
         }
 

@@ -17,7 +17,7 @@ public class CheckUser {
         CheckUser.userRcSQLRepository = userRcSQLRepository;
     }
 
-    public static void check(String keycloakId, Long organizationId) { //keycloakId
+    public static void check(String keycloakId, Long organizationId) {
         UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
         if(!userRcDto.getOrganizationId().equals(organizationId)) {
             throw new UserCheckExceptions("НЕТ ПРАВ");

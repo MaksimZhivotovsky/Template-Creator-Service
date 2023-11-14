@@ -8,9 +8,7 @@ import java.util.List;
 
 public interface TemplateService {
 
-    List<TemplateDto> getAllByOrganisationId(String keycloakId, Long organizationId);
-
-//    List<TemplateDto> getAllByServiceId(Long serviceId);
+    List<Template> getAllByOrganisationId(Long organizationId);
 
     Template createTemplate(String keycloakId, TemplateDto templateDto);
 

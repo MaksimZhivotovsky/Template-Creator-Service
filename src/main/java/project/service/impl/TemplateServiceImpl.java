@@ -32,16 +32,11 @@ public class TemplateServiceImpl implements TemplateService {
 
 
     //    @Cacheable(value="templates", key="#root.method.name")
-    public List<TemplateDto> getAllByOrganisationId(String keycloakId, Long organizationId) {
+    public List<Template> getAllByOrganisationId( Long organizationId) {
         List<Template> templates = templateRepository.findAllByOrganizationId(organizationId);
 
-        CheckUser.check(keycloakId, organizationId);
-
-        List<TemplateDto> templateDtoList = templates.stream()
-                .map(TemplateMapper::mapToTemplateDto)
-                .collect(Collectors.toList());
-        log.info("getAllByServiceId {}", templateDtoList);
-        return templateDtoList;
+        log.info("getAllByServiceId {}", templates);
+        return templates;
     }
 
     @Override
@@ -83,9 +78,9 @@ public class TemplateServiceImpl implements TemplateService {
             template.get().setName(templateDto.getName());
         }
 
-        if (templateDto.getValueDtoList() != null) {
+        if (templateDto.getValues() != null) {
             List<Value> values = new ArrayList<>();
-            for (ValueDto valueDto : templateDto.getValueDtoList()) {
+            for (ValueDto valueDto : templateDto.getValues()) {
                 values.add(ValueMapper.mapToValue(valueDto));
             }
             template.get().setValues(values);
@@ -100,7 +95,7 @@ public class TemplateServiceImpl implements TemplateService {
     public void deleteById(String keycloakId, Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
         CheckUser.check(keycloakId, template.orElseThrow(
-                () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
+                () -> new TemplateNotFoundException("У этой организации нет такого шаблона id : " + templateId)
         ).getOrganizationId());
         template.orElseThrow().setIsArchive(true);
         log.info("deleteById {}", template);

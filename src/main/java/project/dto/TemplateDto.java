@@ -17,6 +17,6 @@ public class TemplateDto {
     private String name;
 //    @NotNull(message = "Нужно указать ID организации")
     private Long organizationId;
-    private List<ValueDto> valueDtoList = new ArrayList<>();
+    private List<ValueDto> values = new ArrayList<>();
 
 }

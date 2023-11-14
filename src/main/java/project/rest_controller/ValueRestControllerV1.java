@@ -27,21 +27,12 @@ public class ValueRestControllerV1 {
             summary = "Получение всех value",
             description = "Позволяет получить все value"
     )
-    @GetMapping
-    public ResponseEntity<List<ValueDto>> getAllValuesByOrganizationId(@RequestParam("keycloakId") String keycloakId) {
-        return new ResponseEntity<>(valueService.getAllValuesByOrganizationId(keycloakId), HttpStatus.OK);
+    @GetMapping(value = "/organization/{organizationId}")
+    public ResponseEntity<List<Value>> getAllValuesByOrganizationId(
+            @PathVariable("organizationId") Long organizationId) {
+        return new ResponseEntity<>(valueService.getAllValuesByOrganizationId(organizationId), HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Получение шаблона по id",
-            description = "Позволяет получить шаблон по id"
-    )
-    @GetMapping(value = "/{valueId}")
-    public ResponseEntity<Optional<ValueDto>> getByIdValue(
-            @RequestParam("keycloakId") String keycloakId,
-            @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
-        return new ResponseEntity<>(valueService.getByIdValue(keycloakId, valueId), HttpStatus.OK);
-    }
 
     @Operation(
             summary = "Добавление шаблона",
@@ -70,9 +61,9 @@ public class ValueRestControllerV1 {
             summary = "Удаление шаблона",
             description = "Позволяет удалить шаблон по id(переводит в состояние архивного)"
     )
-    @DeleteMapping(value = "/{valueId}")
+    @DeleteMapping(value = "/{keycloakId}/{valueId}")
     public ResponseEntity<String> deleteByIdValue(
-            @RequestParam("keycloakId") String keycloakId,
+            @PathVariable("keycloakId") String keycloakId,
             @PathVariable("valueId") @Parameter(description = "ID идентификатор шаблона") Long valueId) {
         valueService.deleteByIdValue(keycloakId, valueId);
         return new ResponseEntity<>("Value переведена в архив", HttpStatus.NO_CONTENT);

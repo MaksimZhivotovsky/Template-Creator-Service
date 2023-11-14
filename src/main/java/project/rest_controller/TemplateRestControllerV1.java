@@ -20,10 +20,9 @@ public class TemplateRestControllerV1 {
     private final TemplateService templateService;
 
     @GetMapping(value = "/organization/{organizationId}")
-    public ResponseEntity<List<TemplateDto>> getAllTemplateDtoByOrganizationId(
-            @RequestParam("keycloakId") String keycloakId,
+    public ResponseEntity<List<Template>> getAllTemplateDtoByOrganizationId(
             @PathVariable("organizationId") Long organizationId) {
-        return new ResponseEntity<>(templateService.getAllByOrganisationId(keycloakId, organizationId), HttpStatus.OK);
+        return new ResponseEntity<>(templateService.getAllByOrganisationId(organizationId), HttpStatus.OK);
     }
 
     @PostMapping
