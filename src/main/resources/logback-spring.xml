@@ -94,13 +94,13 @@
     <springProfile name="local">
         <root level="INFO">
             <appender-ref ref="consoleAppender"/>
-<!--            <appender-ref ref="file"/>-->
+<!--            <appender-ref ref="file"/>?-->
 <!--            <appender-ref ref="ASYNC" />-->
         </root>
-<!--        <logger name="org.zalando.logbook" level="TRACE" additivity="false">-->
-<!--            <appender-ref ref="consoleAppender"/>-->
-<!--            <appender-ref ref="file"/>-->
-<!--        </logger>-->
+        <logger name="org.zalando.logbook" level="TRACE" additivity="false">
+            <appender-ref ref="consoleAppender"/>
+            <appender-ref ref="file"/>
+        </logger>
     </springProfile>
 
 <!--    <springProfile name="Minzdrav">-->

@@ -3,7 +3,6 @@ package project.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import project.utils.ObjectMapperUtil;
-import project.utils.ParseJson;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -33,13 +32,5 @@ public class ValueDto {
     public void setUpdateValue(Object updateValue) {
         this.updateValue = ObjectMapperUtil.setValue(updateValue);
     }
-
-//    public void setJsonValue(String jsonValue) {
-//        this.jsonValue = jsonValue;
-//    }
-//
-//    public void setUpdateValue(String updateValue) {
-//        this.updateValue = updateValue;
-//    }
 
 }

@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.dto.UserRcDto;
 import project.dto.ValueDto;
 import project.entity.Value;
 import project.exceptions.ValueNotFoundException;
 import project.mapper.ValueMapper;
-import project.repository.UserRcSQLRepository;
 import project.repository.ValueRepository;
 import project.service.ValueService;
 import project.utils.CheckUser;
@@ -25,7 +23,6 @@ import java.util.stream.Collectors;
 public class ValueServiceImpl implements ValueService {
 
     private final ValueRepository valueRepository;
-    private final UserRcSQLRepository userRcSQLRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,35 +69,36 @@ public class ValueServiceImpl implements ValueService {
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
     public Value updateValue(String keycloakId, Long valueId, ValueDto valueDto) {
+        CheckUser.check(keycloakId, valueDto.getOrganizationId());
         List<Value> valueList = valueRepository.findAllByOrganizationId(valueDto.getOrganizationId());
 
         Optional<Value> value = valueList.stream()
                 .filter(v -> v.getId().equals(valueId))
                 .findFirst();
 
-        CheckUser.check(keycloakId, value.orElseThrow(
-                () -> new ValueNotFoundException("У этой организации нет такого Value id : " + valueId)
-        ).getOrganizationId());
-
         List<String> jsonValueList = valueList.stream()
                         .map(Value::getJsonValue)
                         .collect(Collectors.toList());
         if(!jsonValueList.contains(valueDto.getJsonValue())) {
-            value.get().setJsonValue(valueDto.getJsonValue());
+            value.orElseThrow(
+                    () -> new ValueNotFoundException("У этой организации нет такого Value id : " + valueId)
+            ).setJsonValue(valueDto.getJsonValue());
         }
 
         List<String> updateValueList = valueList.stream()
                 .map(Value::getUpdateValue)
                 .collect(Collectors.toList());
         if(!updateValueList.contains(valueDto.getUpdateValue())) {
-            value.get().setUpdateValue(valueDto.getUpdateValue());
+            value.orElseThrow().setUpdateValue(valueDto.getUpdateValue());
         }
 
         if(valueDto.getServiceId() != null) {
-            value.get().setServiceId(valueDto.getServiceId());
+            value.orElseThrow().setServiceId(valueDto.getServiceId());
         }
 
-        value.get().setOrganizationId(value.get().getOrganizationId());
+        value.orElseThrow(
+                () -> new ValueNotFoundException("У этой организации нет такого Value id : " + valueId)
+        ).setOrganizationId(value.get().getOrganizationId());
         value.get().setModifyData(LocalDateTime.now());
         log.info("updateValue value : {} ", value.get());
         return value.get();

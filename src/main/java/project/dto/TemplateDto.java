@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class TemplateDto {
 
     @NotBlank
     private String name;
-//    @NotNull(message = "Нужно указать ID организации")
+    @NotNull(message = "Нужно указать ID организации")
     private Long organizationId;
     private List<ValueDto> values = new ArrayList<>();
 

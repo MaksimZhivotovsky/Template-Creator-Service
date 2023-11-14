@@ -2,12 +2,11 @@ package project.rest_controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import project.dto.UserRcDto;
 import project.repository.UserRcSQLRepository;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping(value = "/control")
 public class Controller {
 
     private final UserRcSQLRepository userRcSQLRepository;
