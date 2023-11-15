@@ -21,8 +21,8 @@ public interface ValueService {
 
     List<String> getAllUpdateValueByOrganizationId(Long organizationId);
 
-    List<Object> getAllJsonValueByServiceId( Long serviceId);
+    List<String> getAllJsonValueByServiceId( Long serviceId);
 
-    List<Object> getAllUpdateValueByServiceId( Long serviceId);
+    List<String> getAllUpdateValueByServiceId( Long serviceId);
 
 }

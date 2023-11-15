@@ -39,14 +39,13 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
 //    @CachePut(value="templates", key="#templateDto")
     public Template createTemplate(String keycloakId, TemplateDto templateDto) {
+        CheckUser.check(keycloakId, templateDto.getOrganizationId());
         Template template = TemplateMapper.mapToTemplate(templateDto);
         Optional<Template> templateName = templateRepository.findByName(templateDto.getName());
         if (templateName.isPresent()) {
             throw new TemplateNotFoundException("templateName уже есть :" + templateDto.getName());
         }
-//        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
         template.setModifyData(LocalDateTime.now());
-//        template.setOrganizationId(userRcDto.getOrganizationId());
         log.info("createTemplate {}", template);
         return templateRepository.save(template);
     }
@@ -54,7 +53,6 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
 //    @CachePut(value="templates", key="#templateId")
     public Template updateTemplate(String keycloakId, Long templateId, TemplateDto templateDto) {
-//        UserRcDto userRcDto = userRcSQLRepository.findUserByKcId(keycloakId);
         CheckUser.check(keycloakId, templateDto.getOrganizationId());
         List<Template> templateList = templateRepository.findAllByOrganizationId(templateDto.getOrganizationId());
 
@@ -114,21 +112,21 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<Object> getAllCreateValueByTemplate(Long templateId) {
+    public List<String> getAllJsonValueByTemplate(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
-        List<Object> createValueObject = template.orElseThrow(
+        List<String> createValueList = template.orElseThrow(
                         () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
                 ).getValues().stream()
                 .map(Value::getJsonValue)
                 .collect(Collectors.toList());
-        log.info("getAllCreateValueByTemplate {}", createValueObject);
-        return createValueObject;
+        log.info("getAllCreateValueByTemplate {}", createValueList);
+        return createValueList;
     }
 
     @Override
-    public List<Object> getAllUpdateValueByTemplate(Long templateId) {
+    public List<String> getAllUpdateValueByTemplate(Long templateId) {
         Optional<Template> template = templateRepository.findById(templateId);
-        List<Object> updateValueObject = template.orElseThrow(
+        List<String> updateValueObject = template.orElseThrow(
                         () -> new TemplateNotFoundException("Такого шаблона нет id : " + templateId)
                 ).getValues().stream()
                 .map(Value::getUpdateValue)

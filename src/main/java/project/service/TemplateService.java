@@ -18,7 +18,7 @@ public interface TemplateService {
 
     List<ValueDto> getAllValueByTemplate(Long templateId);
 
-    List<Object> getAllCreateValueByTemplate(Long templateId);
+    List<String> getAllJsonValueByTemplate(Long templateId);
 
-    List<Object> getAllUpdateValueByTemplate(Long templateId);
+    List<String> getAllUpdateValueByTemplate(Long templateId);
 }

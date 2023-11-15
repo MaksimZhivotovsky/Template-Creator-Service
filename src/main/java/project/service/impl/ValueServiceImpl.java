@@ -37,6 +37,7 @@ public class ValueServiceImpl implements ValueService {
     @Transactional
 //    @CachePut(cacheNames = {"valueCache"}, key = "#valueDto")
     public Value createValue(String keycloakId, ValueDto valueDto) {
+        CheckUser.check(keycloakId, valueDto.getOrganizationId());
         Value value = ValueMapper.mapToValue(valueDto);
 
         List<Value> valueList = valueRepository.findAllByOrganizationId(value.getOrganizationId());
@@ -153,10 +154,10 @@ public class ValueServiceImpl implements ValueService {
     }
 
     @Transactional(readOnly = true)
-    public List<Object> getAllJsonValueByServiceId(Long serviceId) {
+    public List<String> getAllJsonValueByServiceId(Long serviceId) {
         List<Value> values = valueRepository.findAllByServiceId(serviceId);
 
-        List<Object> jsonValue = values.stream()
+        List<String> jsonValue = values.stream()
                 .map(Value::getJsonValue)
                 .collect(Collectors.toList());
         log.info("getAllJsonValueByServiceId jsonValue : {} ", jsonValue);
@@ -166,10 +167,10 @@ public class ValueServiceImpl implements ValueService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Object> getAllUpdateValueByServiceId(Long serviceId) {
+    public List<String> getAllUpdateValueByServiceId(Long serviceId) {
         List<Value> values = valueRepository.findAllByServiceId(serviceId);
 
-        List<Object> updateValue = values.stream()
+        List<String> updateValue = values.stream()
                 .map(Value::getUpdateValue)
                 .collect(Collectors.toList());
         log.info("getAllCreateValueByServiceId updateValue : {} ", updateValue);
